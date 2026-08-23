@@ -101,9 +101,28 @@ export const useGameStore = defineStore('game', {
       this._shuffleCurrentLevel()
     },
     async proceedToNextLevel(supabase: any) {
+      // Regra: O máximo de pontos possíveis é o número total de questões de todos os níveis somados.
+      let maxPossibleScore = 0
+      this.levels.forEach(level => {
+        if (level.questions) {
+          maxPossibleScore += level.questions.length
+        }
+      })
+
       // Opção A: Só ganha pontos se for a primeira vez completando este nível
       if (this.currentLevelIndex === this.maxUnlockedLevel) {
-        this.score += this.levelScore
+        // Previne que o usuário ganhe mais pontos do que o número de questões do nível
+        // (Isso corrige o bug de ganhar pontos infinitos ao usar o botão "Voltar")
+        const currentLevelMaxScore = this.levels[this.currentLevelIndex]?.questions?.length || 0
+        const validLevelScore = Math.min(this.levelScore, currentLevelMaxScore)
+        
+        this.score += validLevelScore
+        
+        // Garante que a pontuação total nunca ultrapasse o máximo possível
+        if (this.score > maxPossibleScore) {
+          this.score = maxPossibleScore
+        }
+
         if (this.maxUnlockedLevel < this.levels.length) {
           this.maxUnlockedLevel++
         }

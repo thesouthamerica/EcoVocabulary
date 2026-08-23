@@ -50,7 +50,7 @@ const router = useRouter()
 
 onMounted(() => {
   if (!gameStore.user.isLoggedIn) {
-    router.push('/')
+    router.push('/login')
   }
 })
 

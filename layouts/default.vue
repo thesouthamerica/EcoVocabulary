@@ -4,7 +4,7 @@
     <div class="absolute top-[-10%] left-[-10%] w-64 h-64 bg-eco-green/10 rounded-full blur-3xl z-0"></div>
     <div class="absolute bottom-[10%] right-[-5%] w-80 h-80 bg-eco-blue/10 rounded-full blur-3xl z-0"></div>
 
-    <header class="sticky top-0 z-50 bg-white/70 backdrop-blur-md shadow-sm py-3 px-4 sm:px-6 flex items-center justify-between border-b border-white/50">
+    <header v-if="route.path !== '/'" class="sticky top-0 z-50 bg-white/70 backdrop-blur-md shadow-sm py-3 px-4 sm:px-6 flex items-center justify-between border-b border-white/50">
       
       <!-- Lado Esquerdo: Logo e Botões -->
       <div class="flex items-center gap-3 sm:gap-6">

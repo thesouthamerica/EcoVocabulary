@@ -1,66 +1,50 @@
 <template>
   <div class="flex-1 flex items-center justify-center min-h-[80vh]">
     <div class="glass-panel w-full max-w-md p-8 text-center animate-fade-in-up shadow-2xl">
-      <div class="w-24 h-24 mx-auto bg-eco-green text-white rounded-full flex items-center justify-center text-5xl mb-6 shadow-xl shadow-eco-green/30 transform hover:rotate-12 transition-transform duration-300">
-        🌍
+      
+      <h1 class="text-4xl font-black text-gray-800 mb-4">Eco-Vocabulary</h1>
+      
+      <p class="text-gray-600 mb-8 font-medium">
+        Bem-vindo ao Eco-Vocabulary!<br>
+Aprenda inglês brincando e descubra como se tornar um super-herói do nosso planeta.
+      </p>
+
+      <!-- Logo Illustration -->
+      <div class="w-full flex justify-center mb-8">
+        <div class="relative inline-block group overflow-visible transform transition-transform hover:scale-105 duration-300 cursor-pointer">
+          
+          <!-- Balão de Fala (Canto Superior Esquerdo) -->
+          <div class="absolute right-full mr-2 top-0 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 bg-white text-gray-800 font-bold rounded-xl px-5 py-3 drop-shadow-2xl border border-gray-200 whitespace-nowrap after:content-[''] after:absolute after:top-4 after:left-full after:border-8 after:border-transparent after:border-l-white">
+            Are you ready to learn?
+          </div>
+          
+          <!-- Balão de Fala (Lateral Direita) -->
+          <div class="absolute left-full ml-2 bottom-8 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 delay-150 bg-white text-eco-green font-black rounded-xl px-5 py-3 drop-shadow-2xl border border-gray-200 whitespace-nowrap after:content-[''] after:absolute after:top-1/2 after:-translate-y-1/2 after:right-full after:border-8 after:border-transparent after:border-r-white">
+            Yeah!!!
+          </div>
+
+          <img 
+            src="https://hkddkejyzdvepdlhadlf.supabase.co/storage/v1/object/public/imagens%20exercicios/images/logo%20aves.png" 
+            alt="Logo Aves" 
+            class="h-48 object-contain drop-shadow-lg"
+          />
+        </div>
       </div>
       
-      <h1 class="text-3xl font-black text-gray-800 mb-2">Eco-Vocabulary</h1>
-      <p class="text-gray-600 mb-8 font-medium">Aprenda inglês enquanto salva o planeta!</p>
-
-      <form @submit.prevent="handleLogin" class="space-y-4">
-        <div class="space-y-3">
-          <input 
-            v-model="firstName" 
-            type="text" 
-            placeholder="Seu primeiro nome" 
-            class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-eco-green focus:ring-0 outline-none transition-all text-center font-bold text-gray-700 placeholder-gray-400 text-lg shadow-inner"
-            required
-          />
-          <input 
-            v-model="lastName" 
-            type="text" 
-            placeholder="Seu sobrenome" 
-            class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-eco-green focus:ring-0 outline-none transition-all text-center font-bold text-gray-700 placeholder-gray-400 text-lg shadow-inner"
-            required
-          />
-          <div>
-            <label class="block text-gray-500 font-bold mb-1 text-sm">Data de Nascimento</label>
-            <input 
-              v-model="birthDate" 
-              type="date" 
-              class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-eco-green focus:ring-0 outline-none transition-all text-center font-bold text-gray-700 text-lg shadow-inner"
-              required
-            />
-          </div>
-        </div>
-        
-        <button type="submit" class="w-full btn-primary flex justify-center items-center gap-2 text-lg py-4 mt-2">
-          Começar a Jogar! 🚀
-        </button>
-      </form>
+      <button @click="goToLogin" class="w-full btn-primary flex justify-center items-center gap-2 text-lg py-4 transition-all duration-300 hover:shadow-lg hover:shadow-eco-green/30">
+        Clique aqui para começar
+      </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useGameStore } from '~/stores/game'
 
-const gameStore = useGameStore()
 const router = useRouter()
-const supabase = useSupabaseClient()
 
-const firstName = ref('')
-const lastName = ref('')
-const birthDate = ref('')
-
-const handleLogin = () => {
-  if (firstName.value.trim() && lastName.value.trim() && birthDate.value) {
-    gameStore.login(firstName.value, lastName.value, birthDate.value, supabase)
-    router.push('/menu')
-  }
+const goToLogin = () => {
+  router.push('/login')
 }
 </script>
 
