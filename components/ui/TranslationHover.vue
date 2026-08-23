@@ -10,7 +10,6 @@
       :leave="{ opacity: 0, y: 10, scale: 0.9 }"
       class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-white text-eco-blue font-bold text-sm sm:text-base rounded-xl shadow-lg border border-eco-blue/20 whitespace-nowrap z-50 pointer-events-none flex items-center gap-2"
     >
-      <span class="text-xl">🇺🇸</span>
       {{ translation }}
       
       <!-- Tooltip arrow -->

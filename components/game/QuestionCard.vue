@@ -8,8 +8,9 @@
       
       <div v-if="question.imageUrl" class="mt-6 flex justify-center">
         <TranslationHover :translation="question.imageLabelEn">
-          <div class="relative w-48 h-48 sm:w-64 sm:h-64 rounded-3xl overflow-hidden border-4 border-white shadow-lg cursor-help transition-transform hover:scale-105">
-            <img :src="question.imageUrl" alt="Imagem da pergunta" class="w-full h-full object-cover" />
+          <div class="relative w-48 h-48 sm:w-64 sm:h-64 rounded-3xl overflow-hidden border-4 border-white shadow-lg cursor-help transition-transform hover:scale-105 bg-white flex items-center justify-center text-[100px] sm:text-[130px]">
+            <img v-if="question.imageUrl && question.imageUrl.startsWith('http')" :src="question.imageUrl" alt="Imagem da pergunta" class="w-full h-full object-cover" />
+            <span v-else>{{ question.imageUrl }}</span>
           </div>
         </TranslationHover>
       </div>

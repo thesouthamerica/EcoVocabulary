@@ -13,12 +13,12 @@
           🏆
         </div>
         
-        <h1 class="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-eco-green to-eco-blue mb-4 leading-tight">
-          Parabéns, {{ gameStore.user.name }}!
+        <h1 class="text-4xl sm:text-5xl font-black text-eco-green mb-4 leading-tight">
+          Parabéns, {{ gameStore.user.displayName }}
         </h1>
         
         <p class="text-xl sm:text-2xl text-gray-700 font-bold mb-8">
-          Você se tornou um <br class="sm:hidden" /><span class="text-eco-green uppercase text-2xl sm:text-3xl block mt-2">Guardião Eco-Bilingue</span>!
+          Você se tornou um <br class="sm:hidden" /><span class="text-eco-green uppercase text-2xl sm:text-3xl block mt-2">Guardião Eco-Bilingue</span>
         </p>
 
         <div class="bg-gray-50 rounded-3xl p-6 border-2 border-gray-100 shadow-inner mb-8 max-w-sm mx-auto transform hover:scale-105 transition-transform">
@@ -77,7 +77,7 @@ const downloadCertificate = async () => {
     
     const image = canvas.toDataURL("image/png", 1.0)
     const link = document.createElement('a')
-    link.download = `certificado-eco-bilingue-${gameStore.user.name.replace(/\s+/g, '-').toLowerCase()}.png`
+    link.download = `certificado-eco-bilingue-${gameStore.user.dbId}.png`
     link.href = image
     link.click()
   } catch (err) {

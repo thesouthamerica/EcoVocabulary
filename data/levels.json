@@ -4,11 +4,151 @@
     "title": "Level 1: Cores da Natureza",
     "description": "Vamos aprender as cores básicas!",
     "questions": [
-      { "id": 101, "type": "association", "promptPt": "Verde", "promptEn": "Green", "imageUrl": "https://placehold.co/200x200/27ae60/white?text=Green", "imageLabelEn": "Leaf", "options": [ { "id": 1, "text": "Green", "isCorrect": true }, { "id": 2, "text": "Blue", "isCorrect": false }, { "id": 3, "text": "Red", "isCorrect": false } ] },
-      { "id": 102, "type": "association", "promptPt": "Azul", "promptEn": "Blue", "imageUrl": "https://placehold.co/200x200/2980b9/white?text=Blue", "imageLabelEn": "Water", "options": [ { "id": 1, "text": "Yellow", "isCorrect": false }, { "id": 2, "text": "Blue", "isCorrect": true }, { "id": 3, "text": "Black", "isCorrect": false } ] },
-      { "id": 103, "type": "association", "promptPt": "Amarelo", "promptEn": "Yellow", "imageUrl": "https://placehold.co/200x200/f1c40f/white?text=Yellow", "imageLabelEn": "Sun", "options": [ { "id": 1, "text": "White", "isCorrect": false }, { "id": 2, "text": "Brown", "isCorrect": false }, { "id": 3, "text": "Yellow", "isCorrect": true } ] },
-      { "id": 104, "type": "association", "promptPt": "Marrom", "promptEn": "Brown", "imageUrl": "https://placehold.co/200x200/8e44ad/white?text=Brown", "imageLabelEn": "Earth", "options": [ { "id": 1, "text": "Brown", "isCorrect": true }, { "id": 2, "text": "Pink", "isCorrect": false }, { "id": 3, "text": "Orange", "isCorrect": false } ] },
-      { "id": 105, "type": "association", "promptPt": "Branco", "promptEn": "White", "imageUrl": "https://placehold.co/200x200/ecf0f1/black?text=White", "imageLabelEn": "Cloud", "options": [ { "id": 1, "text": "Gray", "isCorrect": false }, { "id": 2, "text": "White", "isCorrect": true }, { "id": 3, "text": "Purple", "isCorrect": false } ] }
+      {
+        "id": 101,
+        "type": "association",
+        "promptPt": "Verde",
+        "promptEn": "Green",
+        "imageUrl": "https://placehold.co/200x200/27ae60/27ae60?text=Green",
+        "options": [
+          {
+            "id": 1,
+            "text": "Green",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "Blue",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Red",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Purple",
+            "isCorrect": false
+          }
+        ]
+      },
+      {
+        "id": 102,
+        "type": "association",
+        "promptPt": "Azul",
+        "promptEn": "Blue",
+        "imageUrl": "https://placehold.co/200x200/2980b9/2980b9?text=Blue",
+        "options": [
+          {
+            "id": 1,
+            "text": "Yellow",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Blue",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Black",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Purple",
+            "isCorrect": false
+          }
+        ]
+      },
+      {
+        "id": 103,
+        "type": "association",
+        "promptPt": "Amarelo",
+        "promptEn": "Yellow",
+        "imageUrl": "https://placehold.co/200x200/f1c40f/f1c40f?text=Yellow",
+        "options": [
+          {
+            "id": 1,
+            "text": "White",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Brown",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Yellow",
+            "isCorrect": true
+          },
+          {
+            "id": 4,
+            "text": "Purple",
+            "isCorrect": false
+          }
+        ]
+      },
+      {
+        "id": 104,
+        "type": "association",
+        "promptPt": "Preto",
+        "promptEn": "Black",
+        "imageUrl": "https://placehold.co/200x200/000000/000000?text=Black",
+        "options": [
+          {
+            "id": 1,
+            "text": "Black",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "Pink",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Orange",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Purple",
+            "isCorrect": false
+          }
+        ]
+      },
+      {
+        "id": 105,
+        "type": "association",
+        "promptPt": "Branco",
+        "promptEn": "White",
+        "imageUrl": "https://placehold.co/200x200/ecf0f1/ecf0f1?text=White",
+        "options": [
+          {
+            "id": 1,
+            "text": "Gray",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "White",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Purple",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Purple",
+            "isCorrect": false
+          }
+        ]
+      }
     ]
   },
   {
@@ -16,11 +156,151 @@
     "title": "Level 2: Frutas e Comidas Orgânicas",
     "description": "Comidas naturais fazem bem!",
     "questions": [
-      { "id": 201, "type": "translation", "promptPt": "Maçã", "promptEn": "Apple", "options": [ { "id": 1, "text": "Banana", "isCorrect": false }, { "id": 2, "text": "Apple", "isCorrect": true } ] },
-      { "id": 202, "type": "translation", "promptPt": "Banana", "promptEn": "Banana", "options": [ { "id": 1, "text": "Banana", "isCorrect": true }, { "id": 2, "text": "Orange", "isCorrect": false } ] },
-      { "id": 203, "type": "translation", "promptPt": "Água", "promptEn": "Water", "options": [ { "id": 1, "text": "Milk", "isCorrect": false }, { "id": 2, "text": "Water", "isCorrect": true } ] },
-      { "id": 204, "type": "translation", "promptPt": "Pão", "promptEn": "Bread", "options": [ { "id": 1, "text": "Bread", "isCorrect": true }, { "id": 2, "text": "Meat", "isCorrect": false } ] },
-      { "id": 205, "type": "translation", "promptPt": "Peixe", "promptEn": "Fish", "options": [ { "id": 1, "text": "Chicken", "isCorrect": false }, { "id": 2, "text": "Fish", "isCorrect": true } ] }
+      {
+        "id": 201,
+        "type": "translation",
+        "promptPt": "Maçã",
+        "promptEn": "Apple",
+        "imageUrl": "🍎",
+        "options": [
+          {
+            "id": 1,
+            "text": "Banana",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Apple",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Rice",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Meat",
+            "isCorrect": false
+          }
+        ]
+      },
+      {
+        "id": 202,
+        "type": "translation",
+        "promptPt": "Banana",
+        "promptEn": "Banana",
+        "options": [
+          {
+            "id": 1,
+            "text": "Banana",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "Orange",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Grape",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Meat",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🍌"
+      },
+      {
+        "id": 203,
+        "type": "translation",
+        "promptPt": "Água",
+        "promptEn": "Water",
+        "options": [
+          {
+            "id": 1,
+            "text": "Milk",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Water",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Grape",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Rice",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "💧"
+      },
+      {
+        "id": 204,
+        "type": "translation",
+        "promptPt": "Pão",
+        "promptEn": "Bread",
+        "options": [
+          {
+            "id": 1,
+            "text": "Bread",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "Meat",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Orange",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Chicken",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🍞"
+      },
+      {
+        "id": 205,
+        "type": "translation",
+        "promptPt": "Peixe",
+        "promptEn": "Fish",
+        "options": [
+          {
+            "id": 1,
+            "text": "Chicken",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Fish",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Potato",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Grape",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🐟"
+      }
     ]
   },
   {
@@ -28,11 +308,151 @@
     "title": "Level 3: A Natureza",
     "description": "Elementos do meio ambiente",
     "questions": [
-      { "id": 301, "type": "association", "promptPt": "Árvore", "promptEn": "Tree", "options": [ { "id": 1, "text": "Tree", "isCorrect": true }, { "id": 2, "text": "Car", "isCorrect": false } ] },
-      { "id": 302, "type": "association", "promptPt": "Flor", "promptEn": "Flower", "options": [ { "id": 1, "text": "House", "isCorrect": false }, { "id": 2, "text": "Flower", "isCorrect": true } ] },
-      { "id": 303, "type": "association", "promptPt": "Sol", "promptEn": "Sun", "options": [ { "id": 1, "text": "Moon", "isCorrect": false }, { "id": 2, "text": "Sun", "isCorrect": true } ] },
-      { "id": 304, "type": "association", "promptPt": "Rio", "promptEn": "River", "options": [ { "id": 1, "text": "River", "isCorrect": true }, { "id": 2, "text": "Street", "isCorrect": false } ] },
-      { "id": 305, "type": "association", "promptPt": "Animal", "promptEn": "Animal", "options": [ { "id": 1, "text": "Robot", "isCorrect": false }, { "id": 2, "text": "Animal", "isCorrect": true } ] }
+      {
+        "id": 301,
+        "type": "association",
+        "promptPt": "Árvore",
+        "promptEn": "Tree",
+        "options": [
+          {
+            "id": 1,
+            "text": "Tree",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "Car",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Moon",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Mountain",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🌳"
+      },
+      {
+        "id": 302,
+        "type": "association",
+        "promptPt": "Flor",
+        "promptEn": "Flower",
+        "options": [
+          {
+            "id": 1,
+            "text": "House",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Flower",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Rock",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Leaf",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🌸"
+      },
+      {
+        "id": 303,
+        "type": "association",
+        "promptPt": "Sol",
+        "promptEn": "Sun",
+        "options": [
+          {
+            "id": 1,
+            "text": "Moon",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Sun",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Star",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Mountain",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "☀️"
+      },
+      {
+        "id": 304,
+        "type": "association",
+        "promptPt": "Rio",
+        "promptEn": "River",
+        "options": [
+          {
+            "id": 1,
+            "text": "River",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "Street",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Mountain",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Cloud",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🌊"
+      },
+      {
+        "id": 305,
+        "type": "association",
+        "promptPt": "Animal",
+        "promptEn": "Animal",
+        "options": [
+          {
+            "id": 1,
+            "text": "Robot",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Animal",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Rock",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Mountain",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🐾"
+      }
     ]
   },
   {
@@ -40,11 +460,151 @@
     "title": "Level 4: Lixeiras da Reciclagem",
     "description": "Onde jogamos o lixo?",
     "questions": [
-      { "id": 401, "type": "translation", "promptPt": "Papel", "promptEn": "Paper", "options": [ { "id": 1, "text": "Paper", "isCorrect": true }, { "id": 2, "text": "Glass", "isCorrect": false } ] },
-      { "id": 402, "type": "translation", "promptPt": "Plástico", "promptEn": "Plastic", "options": [ { "id": 1, "text": "Metal", "isCorrect": false }, { "id": 2, "text": "Plastic", "isCorrect": true } ] },
-      { "id": 403, "type": "translation", "promptPt": "Vidro", "promptEn": "Glass", "options": [ { "id": 1, "text": "Glass", "isCorrect": true }, { "id": 2, "text": "Paper", "isCorrect": false } ] },
-      { "id": 404, "type": "translation", "promptPt": "Metal", "promptEn": "Metal", "options": [ { "id": 1, "text": "Plastic", "isCorrect": false }, { "id": 2, "text": "Metal", "isCorrect": true } ] },
-      { "id": 405, "type": "translation", "promptPt": "Orgânico", "promptEn": "Organic", "options": [ { "id": 1, "text": "Organic", "isCorrect": true }, { "id": 2, "text": "Electronic", "isCorrect": false } ] }
+      {
+        "id": 401,
+        "type": "translation",
+        "promptPt": "Papel",
+        "promptEn": "Paper",
+        "options": [
+          {
+            "id": 1,
+            "text": "Paper",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "Glass",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Trash",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Rubber",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "📄"
+      },
+      {
+        "id": 402,
+        "type": "translation",
+        "promptPt": "Plástico",
+        "promptEn": "Plastic",
+        "options": [
+          {
+            "id": 1,
+            "text": "Metal",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Plastic",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Fabric",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Battery",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🥤"
+      },
+      {
+        "id": 403,
+        "type": "translation",
+        "promptPt": "Vidro",
+        "promptEn": "Glass",
+        "options": [
+          {
+            "id": 1,
+            "text": "Glass",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "Paper",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Ceramic",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Electronic",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🍷"
+      },
+      {
+        "id": 404,
+        "type": "translation",
+        "promptPt": "Metal",
+        "promptEn": "Metal",
+        "options": [
+          {
+            "id": 1,
+            "text": "Plastic",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Metal",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Rubber",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Trash",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🥫"
+      },
+      {
+        "id": 405,
+        "type": "translation",
+        "promptPt": "Orgânico",
+        "promptEn": "Organic",
+        "options": [
+          {
+            "id": 1,
+            "text": "Organic",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "Electronic",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Battery",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Ceramic",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🍂"
+      }
     ]
   },
   {
@@ -52,11 +612,151 @@
     "title": "Level 5: Ações Ecológicas",
     "description": "O que devemos fazer?",
     "questions": [
-      { "id": 501, "type": "translation", "promptPt": "Plante uma árvore", "promptEn": "Plant a tree", "options": [ { "id": 1, "text": "Cut a tree", "isCorrect": false }, { "id": 2, "text": "Plant a tree", "isCorrect": true } ] },
-      { "id": 502, "type": "translation", "promptPt": "Economize água", "promptEn": "Save water", "options": [ { "id": 1, "text": "Waste water", "isCorrect": false }, { "id": 2, "text": "Save water", "isCorrect": true } ] },
-      { "id": 503, "type": "translation", "promptPt": "Apague a luz", "promptEn": "Turn off the light", "options": [ { "id": 1, "text": "Turn on the light", "isCorrect": false }, { "id": 2, "text": "Turn off the light", "isCorrect": true } ] },
-      { "id": 504, "type": "translation", "promptPt": "Recicle", "promptEn": "Recycle", "options": [ { "id": 1, "text": "Litter", "isCorrect": false }, { "id": 2, "text": "Recycle", "isCorrect": true } ] },
-      { "id": 505, "type": "translation", "promptPt": "Ande de bicicleta", "promptEn": "Ride a bike", "options": [ { "id": 1, "text": "Drive a car", "isCorrect": false }, { "id": 2, "text": "Ride a bike", "isCorrect": true } ] }
+      {
+        "id": 501,
+        "type": "translation",
+        "promptPt": "Plante uma árvore",
+        "promptEn": "Plant a tree",
+        "options": [
+          {
+            "id": 1,
+            "text": "Cut a tree",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Plant a tree",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Drive a car",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Burn trash",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🌱"
+      },
+      {
+        "id": 502,
+        "type": "translation",
+        "promptPt": "Economize água",
+        "promptEn": "Save water",
+        "options": [
+          {
+            "id": 1,
+            "text": "Waste water",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Save water",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Burn trash",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Throw away",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🚰"
+      },
+      {
+        "id": 503,
+        "type": "translation",
+        "promptPt": "Apague a luz",
+        "promptEn": "Turn off the light",
+        "options": [
+          {
+            "id": 1,
+            "text": "Turn on the light",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Turn off the light",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Burn trash",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Waste water",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "💡"
+      },
+      {
+        "id": 504,
+        "type": "translation",
+        "promptPt": "Recicle",
+        "promptEn": "Recycle",
+        "options": [
+          {
+            "id": 1,
+            "text": "Litter",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Recycle",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Throw away",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Turn on the light",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "♻️"
+      },
+      {
+        "id": 505,
+        "type": "translation",
+        "promptPt": "Ande de bicicleta",
+        "promptEn": "Ride a bike",
+        "options": [
+          {
+            "id": 1,
+            "text": "Drive a car",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Ride a bike",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Burn trash",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Throw away",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🚲"
+      }
     ]
   },
   {
@@ -64,11 +764,151 @@
     "title": "Level 6: Transporte",
     "description": "Meios de transporte na cidade",
     "questions": [
-      { "id": 601, "type": "translation", "promptPt": "Ônibus", "promptEn": "Bus", "options": [ { "id": 1, "text": "Bus", "isCorrect": true }, { "id": 2, "text": "Train", "isCorrect": false } ] },
-      { "id": 602, "type": "translation", "promptPt": "Bicicleta", "promptEn": "Bicycle", "options": [ { "id": 1, "text": "Bicycle", "isCorrect": true }, { "id": 2, "text": "Car", "isCorrect": false } ] },
-      { "id": 603, "type": "translation", "promptPt": "Carro", "promptEn": "Car", "options": [ { "id": 1, "text": "Bus", "isCorrect": false }, { "id": 2, "text": "Car", "isCorrect": true } ] },
-      { "id": 604, "type": "translation", "promptPt": "Trem", "promptEn": "Train", "options": [ { "id": 1, "text": "Train", "isCorrect": true }, { "id": 2, "text": "Airplane", "isCorrect": false } ] },
-      { "id": 605, "type": "translation", "promptPt": "Andar a pé", "promptEn": "Walking", "options": [ { "id": 1, "text": "Running", "isCorrect": false }, { "id": 2, "text": "Walking", "isCorrect": true } ] }
+      {
+        "id": 601,
+        "type": "translation",
+        "promptPt": "Ônibus",
+        "promptEn": "Bus",
+        "options": [
+          {
+            "id": 1,
+            "text": "Bus",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "Train",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Skateboard",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Motorcycle",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🚌"
+      },
+      {
+        "id": 602,
+        "type": "translation",
+        "promptPt": "Bicicleta",
+        "promptEn": "Bicycle",
+        "options": [
+          {
+            "id": 1,
+            "text": "Bicycle",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "Car",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Truck",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Skateboard",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🚲"
+      },
+      {
+        "id": 603,
+        "type": "translation",
+        "promptPt": "Carro",
+        "promptEn": "Car",
+        "options": [
+          {
+            "id": 1,
+            "text": "Bus",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Car",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Helicopter",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Truck",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🚗"
+      },
+      {
+        "id": 604,
+        "type": "translation",
+        "promptPt": "Trem",
+        "promptEn": "Train",
+        "options": [
+          {
+            "id": 1,
+            "text": "Train",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "Airplane",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Helicopter",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Truck",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🚂"
+      },
+      {
+        "id": 605,
+        "type": "translation",
+        "promptPt": "Andar a pé",
+        "promptEn": "Walking",
+        "options": [
+          {
+            "id": 1,
+            "text": "Running",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Walking",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Skateboard",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Scooter",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🚶"
+      }
     ]
   },
   {
@@ -76,11 +916,151 @@
     "title": "Level 7: Energia Limpa",
     "description": "Fontes de energia renováveis",
     "questions": [
-      { "id": 701, "type": "translation", "promptPt": "Painel Solar", "promptEn": "Solar panel", "options": [ { "id": 1, "text": "Wind turbine", "isCorrect": false }, { "id": 2, "text": "Solar panel", "isCorrect": true } ] },
-      { "id": 702, "type": "translation", "promptPt": "Turbina Eólica", "promptEn": "Wind turbine", "options": [ { "id": 1, "text": "Solar panel", "isCorrect": false }, { "id": 2, "text": "Wind turbine", "isCorrect": true } ] },
-      { "id": 703, "type": "translation", "promptPt": "Eletricidade", "promptEn": "Electricity", "options": [ { "id": 1, "text": "Electricity", "isCorrect": true }, { "id": 2, "text": "Fire", "isCorrect": false } ] },
-      { "id": 704, "type": "translation", "promptPt": "Lâmpada", "promptEn": "Lightbulb", "options": [ { "id": 1, "text": "Candle", "isCorrect": false }, { "id": 2, "text": "Lightbulb", "isCorrect": true } ] },
-      { "id": 705, "type": "translation", "promptPt": "Bateria", "promptEn": "Battery", "options": [ { "id": 1, "text": "Battery", "isCorrect": true }, { "id": 2, "text": "Wire", "isCorrect": false } ] }
+      {
+        "id": 701,
+        "type": "translation",
+        "promptPt": "Painel Solar",
+        "promptEn": "Solar panel",
+        "options": [
+          {
+            "id": 1,
+            "text": "Wind turbine",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Solar panel",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Gas",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Diesel",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "☀️"
+      },
+      {
+        "id": 702,
+        "type": "translation",
+        "promptPt": "Turbina Eólica",
+        "promptEn": "Wind turbine",
+        "options": [
+          {
+            "id": 1,
+            "text": "Solar panel",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Wind turbine",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Coal",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Diesel",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🌬️"
+      },
+      {
+        "id": 703,
+        "type": "translation",
+        "promptPt": "Eletricidade",
+        "promptEn": "Electricity",
+        "options": [
+          {
+            "id": 1,
+            "text": "Electricity",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "Fire",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Smoke",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Gasoline",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "⚡"
+      },
+      {
+        "id": 704,
+        "type": "translation",
+        "promptPt": "Lâmpada",
+        "promptEn": "Lightbulb",
+        "options": [
+          {
+            "id": 1,
+            "text": "Candle",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Lightbulb",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Fire",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Oil",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "💡"
+      },
+      {
+        "id": 705,
+        "type": "translation",
+        "promptPt": "Bateria",
+        "promptEn": "Battery",
+        "options": [
+          {
+            "id": 1,
+            "text": "Battery",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "Wire",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Smoke",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Fire",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🔋"
+      }
     ]
   },
   {
@@ -88,11 +1068,151 @@
     "title": "Level 8: Verbos de Ação",
     "description": "Ações do dia a dia",
     "questions": [
-      { "id": 801, "type": "translation", "promptPt": "Ser / Estar", "promptEn": "To be", "options": [ { "id": 1, "text": "To be", "isCorrect": true }, { "id": 2, "text": "To go", "isCorrect": false } ] },
-      { "id": 802, "type": "translation", "promptPt": "Ter", "promptEn": "To have", "options": [ { "id": 1, "text": "To make", "isCorrect": false }, { "id": 2, "text": "To have", "isCorrect": true } ] },
-      { "id": 803, "type": "translation", "promptPt": "Fazer (ação)", "promptEn": "To do", "options": [ { "id": 1, "text": "To do", "isCorrect": true }, { "id": 2, "text": "To stop", "isCorrect": false } ] },
-      { "id": 804, "type": "translation", "promptPt": "Fazer (criar)", "promptEn": "To make", "options": [ { "id": 1, "text": "To have", "isCorrect": false }, { "id": 2, "text": "To make", "isCorrect": true } ] },
-      { "id": 805, "type": "translation", "promptPt": "Ir", "promptEn": "To go", "options": [ { "id": 1, "text": "To come", "isCorrect": false }, { "id": 2, "text": "To go", "isCorrect": true } ] }
+      {
+        "id": 801,
+        "type": "translation",
+        "promptPt": "Ser / Estar",
+        "promptEn": "To be",
+        "options": [
+          {
+            "id": 1,
+            "text": "To be",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "To go",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "To stop",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "To eat",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "👤"
+      },
+      {
+        "id": 802,
+        "type": "translation",
+        "promptPt": "Ter",
+        "promptEn": "To have",
+        "options": [
+          {
+            "id": 1,
+            "text": "To make",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "To have",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "To stop",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "To jump",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🤲"
+      },
+      {
+        "id": 803,
+        "type": "translation",
+        "promptPt": "Fazer (ação)",
+        "promptEn": "To do",
+        "options": [
+          {
+            "id": 1,
+            "text": "To do",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "To stop",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "To jump",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "To sleep",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🛠️"
+      },
+      {
+        "id": 804,
+        "type": "translation",
+        "promptPt": "Fazer (criar)",
+        "promptEn": "To make",
+        "options": [
+          {
+            "id": 1,
+            "text": "To have",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "To make",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "To jump",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "To run",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🎨"
+      },
+      {
+        "id": 805,
+        "type": "translation",
+        "promptPt": "Ir",
+        "promptEn": "To go",
+        "options": [
+          {
+            "id": 1,
+            "text": "To come",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "To go",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "To stop",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "To run",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🚶"
+      }
     ]
   },
   {
@@ -100,11 +1220,151 @@
     "title": "Level 9: Verbo To Be e Sustentabilidade",
     "description": "O verbo To Be aplicado!",
     "questions": [
-      { "id": 901, "type": "sentence", "promptPt": "Eu sou ecológico", "promptEn": "I am eco-friendly", "options": [ { "id": 1, "text": "I am eco-friendly", "isCorrect": true }, { "id": 2, "text": "You are eco-friendly", "isCorrect": false } ] },
-      { "id": 902, "type": "sentence", "promptPt": "A água é limpa", "promptEn": "The water is clean", "options": [ { "id": 1, "text": "The water is dirty", "isCorrect": false }, { "id": 2, "text": "The water is clean", "isCorrect": true } ] },
-      { "id": 903, "type": "sentence", "promptPt": "Nós somos unidos", "promptEn": "We are united", "options": [ { "id": 1, "text": "We are united", "isCorrect": true }, { "id": 2, "text": "They are united", "isCorrect": false } ] },
-      { "id": 904, "type": "sentence", "promptPt": "Isto é uma árvore", "promptEn": "It is a tree", "options": [ { "id": 1, "text": "It is a car", "isCorrect": false }, { "id": 2, "text": "It is a tree", "isCorrect": true } ] },
-      { "id": 905, "type": "sentence", "promptPt": "Você é um guardião", "promptEn": "You are a guardian", "options": [ { "id": 1, "text": "I am a guardian", "isCorrect": false }, { "id": 2, "text": "You are a guardian", "isCorrect": true } ] }
+      {
+        "id": 901,
+        "type": "sentence",
+        "promptPt": "Eu sou ecológico",
+        "promptEn": "I am eco-friendly",
+        "options": [
+          {
+            "id": 1,
+            "text": "I am eco-friendly",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "You are eco-friendly",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "You are a villain",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "They are divided",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🌍"
+      },
+      {
+        "id": 902,
+        "type": "sentence",
+        "promptPt": "A água é limpa",
+        "promptEn": "The water is clean",
+        "options": [
+          {
+            "id": 1,
+            "text": "The water is dirty",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "The water is clean",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "I am a monster",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "It is a rock",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "💧"
+      },
+      {
+        "id": 903,
+        "type": "sentence",
+        "promptPt": "Nós somos unidos",
+        "promptEn": "We are united",
+        "options": [
+          {
+            "id": 1,
+            "text": "We are united",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "They are united",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "The water is dirty",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "I am a monster",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🤝"
+      },
+      {
+        "id": 904,
+        "type": "sentence",
+        "promptPt": "Isto é uma árvore",
+        "promptEn": "It is a tree",
+        "options": [
+          {
+            "id": 1,
+            "text": "It is a car",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "It is a tree",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "The water is dirty",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "I hate nature",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🌳"
+      },
+      {
+        "id": 905,
+        "type": "sentence",
+        "promptPt": "Você é um guardião",
+        "promptEn": "You are a guardian",
+        "options": [
+          {
+            "id": 1,
+            "text": "I am a guardian",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "You are a guardian",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "The water is dirty",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "I am a monster",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🛡️"
+      }
     ]
   },
   {
@@ -112,11 +1372,151 @@
     "title": "Level 10: Adjetivos",
     "description": "Qualidades e defeitos",
     "questions": [
-      { "id": 1001, "type": "translation", "promptPt": "Limpo", "promptEn": "Clean", "options": [ { "id": 1, "text": "Clean", "isCorrect": true }, { "id": 2, "text": "Dirty", "isCorrect": false } ] },
-      { "id": 1002, "type": "translation", "promptPt": "Sujo", "promptEn": "Dirty", "options": [ { "id": 1, "text": "Clean", "isCorrect": false }, { "id": 2, "text": "Dirty", "isCorrect": true } ] },
-      { "id": 1003, "type": "translation", "promptPt": "Grande", "promptEn": "Big", "options": [ { "id": 1, "text": "Small", "isCorrect": false }, { "id": 2, "text": "Big", "isCorrect": true } ] },
-      { "id": 1004, "type": "translation", "promptPt": "Pequeno", "promptEn": "Small", "options": [ { "id": 1, "text": "Small", "isCorrect": true }, { "id": 2, "text": "Big", "isCorrect": false } ] },
-      { "id": 1005, "type": "translation", "promptPt": "Verde (ecológico)", "promptEn": "Green", "options": [ { "id": 1, "text": "Green", "isCorrect": true }, { "id": 2, "text": "Gray", "isCorrect": false } ] }
+      {
+        "id": 1001,
+        "type": "translation",
+        "promptPt": "Limpo",
+        "promptEn": "Clean",
+        "options": [
+          {
+            "id": 1,
+            "text": "Clean",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "Dirty",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Slow",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Happy",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "✨"
+      },
+      {
+        "id": 1002,
+        "type": "translation",
+        "promptPt": "Sujo",
+        "promptEn": "Dirty",
+        "options": [
+          {
+            "id": 1,
+            "text": "Clean",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Dirty",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Dark",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Light",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🗑️"
+      },
+      {
+        "id": 1003,
+        "type": "translation",
+        "promptPt": "Grande",
+        "promptEn": "Big",
+        "options": [
+          {
+            "id": 1,
+            "text": "Small",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Big",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Blue",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Dark",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🐘"
+      },
+      {
+        "id": 1004,
+        "type": "translation",
+        "promptPt": "Pequeno",
+        "promptEn": "Small",
+        "options": [
+          {
+            "id": 1,
+            "text": "Small",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "Big",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Fast",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Heavy",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🐜"
+      },
+      {
+        "id": 1005,
+        "type": "translation",
+        "promptPt": "Verde (ecológico)",
+        "promptEn": "Green",
+        "options": [
+          {
+            "id": 1,
+            "text": "Green",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "Gray",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Sad",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Red",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🌿"
+      }
     ]
   },
   {
@@ -124,11 +1524,151 @@
     "title": "Level 11: Locais da Cidade",
     "description": "Nossa cidade",
     "questions": [
-      { "id": 1101, "type": "translation", "promptPt": "Parque", "promptEn": "Park", "options": [ { "id": 1, "text": "Park", "isCorrect": true }, { "id": 2, "text": "Mall", "isCorrect": false } ] },
-      { "id": 1102, "type": "translation", "promptPt": "Rua", "promptEn": "Street", "options": [ { "id": 1, "text": "House", "isCorrect": false }, { "id": 2, "text": "Street", "isCorrect": true } ] },
-      { "id": 1103, "type": "translation", "promptPt": "Casa", "promptEn": "House", "options": [ { "id": 1, "text": "School", "isCorrect": false }, { "id": 2, "text": "House", "isCorrect": true } ] },
-      { "id": 1104, "type": "translation", "promptPt": "Escola", "promptEn": "School", "options": [ { "id": 1, "text": "School", "isCorrect": true }, { "id": 2, "text": "Park", "isCorrect": false } ] },
-      { "id": 1105, "type": "translation", "promptPt": "Praia", "promptEn": "Beach", "options": [ { "id": 1, "text": "Mountain", "isCorrect": false }, { "id": 2, "text": "Beach", "isCorrect": true } ] }
+      {
+        "id": 1101,
+        "type": "translation",
+        "promptPt": "Parque",
+        "promptEn": "Park",
+        "options": [
+          {
+            "id": 1,
+            "text": "Park",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "Mall",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Bank",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Cinema",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🏞️"
+      },
+      {
+        "id": 1102,
+        "type": "translation",
+        "promptPt": "Rua",
+        "promptEn": "Street",
+        "options": [
+          {
+            "id": 1,
+            "text": "House",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Street",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Mall",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Hospital",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🛣️"
+      },
+      {
+        "id": 1103,
+        "type": "translation",
+        "promptPt": "Casa",
+        "promptEn": "House",
+        "options": [
+          {
+            "id": 1,
+            "text": "School",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "House",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Bank",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Gym",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🏠"
+      },
+      {
+        "id": 1104,
+        "type": "translation",
+        "promptPt": "Escola",
+        "promptEn": "School",
+        "options": [
+          {
+            "id": 1,
+            "text": "School",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "Park",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Cinema",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Hospital",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🏫"
+      },
+      {
+        "id": 1105,
+        "type": "translation",
+        "promptPt": "Praia",
+        "promptEn": "Beach",
+        "options": [
+          {
+            "id": 1,
+            "text": "Mountain",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Beach",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Hospital",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Supermarket",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🏖️"
+      }
     ]
   },
   {
@@ -136,11 +1676,151 @@
     "title": "Level 12: Clima",
     "description": "Como está o tempo?",
     "questions": [
-      { "id": 1201, "type": "translation", "promptPt": "Ensolarado", "promptEn": "Sunny", "options": [ { "id": 1, "text": "Rainy", "isCorrect": false }, { "id": 2, "text": "Sunny", "isCorrect": true } ] },
-      { "id": 1202, "type": "translation", "promptPt": "Chuvoso", "promptEn": "Rainy", "options": [ { "id": 1, "text": "Sunny", "isCorrect": false }, { "id": 2, "text": "Rainy", "isCorrect": true } ] },
-      { "id": 1203, "type": "translation", "promptPt": "Nublado", "promptEn": "Cloudy", "options": [ { "id": 1, "text": "Cloudy", "isCorrect": true }, { "id": 2, "text": "Windy", "isCorrect": false } ] },
-      { "id": 1204, "type": "translation", "promptPt": "Ventoso", "promptEn": "Windy", "options": [ { "id": 1, "text": "Windy", "isCorrect": true }, { "id": 2, "text": "Sunny", "isCorrect": false } ] },
-      { "id": 1205, "type": "translation", "promptPt": "Quente", "promptEn": "Hot", "options": [ { "id": 1, "text": "Cold", "isCorrect": false }, { "id": 2, "text": "Hot", "isCorrect": true } ] }
+      {
+        "id": 1201,
+        "type": "translation",
+        "promptPt": "Ensolarado",
+        "promptEn": "Sunny",
+        "options": [
+          {
+            "id": 1,
+            "text": "Rainy",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Sunny",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Dry",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Stormy",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "☀️"
+      },
+      {
+        "id": 1202,
+        "type": "translation",
+        "promptPt": "Chuvoso",
+        "promptEn": "Rainy",
+        "options": [
+          {
+            "id": 1,
+            "text": "Sunny",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Rainy",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Clear",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Freezing",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🌧️"
+      },
+      {
+        "id": 1203,
+        "type": "translation",
+        "promptPt": "Nublado",
+        "promptEn": "Cloudy",
+        "options": [
+          {
+            "id": 1,
+            "text": "Cloudy",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "Windy",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Foggy",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Cold",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "☁️"
+      },
+      {
+        "id": 1204,
+        "type": "translation",
+        "promptPt": "Ventoso",
+        "promptEn": "Windy",
+        "options": [
+          {
+            "id": 1,
+            "text": "Windy",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "Sunny",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Freezing",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Snowing",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🌬️"
+      },
+      {
+        "id": 1205,
+        "type": "translation",
+        "promptPt": "Quente",
+        "promptEn": "Hot",
+        "options": [
+          {
+            "id": 1,
+            "text": "Cold",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Hot",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Freezing",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Clear",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🌡️"
+      }
     ]
   },
   {
@@ -148,11 +1828,151 @@
     "title": "Level 13: Frases Curtas 1",
     "description": "Juntando as palavras",
     "questions": [
-      { "id": 1301, "type": "sentence", "promptPt": "O parque é limpo", "promptEn": "The park is clean", "options": [ { "id": 1, "text": "The park is clean", "isCorrect": true }, { "id": 2, "text": "The park is dirty", "isCorrect": false } ] },
-      { "id": 1302, "type": "sentence", "promptPt": "Eu reciclo plástico", "promptEn": "I recycle plastic", "options": [ { "id": 1, "text": "I recycle paper", "isCorrect": false }, { "id": 2, "text": "I recycle plastic", "isCorrect": true } ] },
-      { "id": 1303, "type": "sentence", "promptPt": "Nós economizamos água", "promptEn": "We save water", "options": [ { "id": 1, "text": "We waste water", "isCorrect": false }, { "id": 2, "text": "We save water", "isCorrect": true } ] },
-      { "id": 1304, "type": "sentence", "promptPt": "O sol é quente", "promptEn": "The sun is hot", "options": [ { "id": 1, "text": "The moon is cold", "isCorrect": false }, { "id": 2, "text": "The sun is hot", "isCorrect": true } ] },
-      { "id": 1305, "type": "sentence", "promptPt": "Apague a luz", "promptEn": "Turn off the light", "options": [ { "id": 1, "text": "Turn on the light", "isCorrect": false }, { "id": 2, "text": "Turn off the light", "isCorrect": true } ] }
+      {
+        "id": 1301,
+        "type": "sentence",
+        "promptPt": "O parque é limpo",
+        "promptEn": "The park is clean",
+        "options": [
+          {
+            "id": 1,
+            "text": "The park is clean",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "The park is dirty",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "The sky is green",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "We waste water",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🏞️"
+      },
+      {
+        "id": 1302,
+        "type": "sentence",
+        "promptPt": "Eu reciclo plástico",
+        "promptEn": "I recycle plastic",
+        "options": [
+          {
+            "id": 1,
+            "text": "I recycle paper",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "I recycle plastic",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "The sky is green",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "The sun is cold",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "♻️"
+      },
+      {
+        "id": 1303,
+        "type": "sentence",
+        "promptPt": "Nós economizamos água",
+        "promptEn": "We save water",
+        "options": [
+          {
+            "id": 1,
+            "text": "We waste water",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "We save water",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "The park is dirty",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Turn on the light",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🚰"
+      },
+      {
+        "id": 1304,
+        "type": "sentence",
+        "promptPt": "O sol é quente",
+        "promptEn": "The sun is hot",
+        "options": [
+          {
+            "id": 1,
+            "text": "The moon is cold",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "The sun is hot",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "I throw plastic",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "The sky is green",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "☀️"
+      },
+      {
+        "id": 1305,
+        "type": "sentence",
+        "promptPt": "Apague a luz",
+        "promptEn": "Turn off the light",
+        "options": [
+          {
+            "id": 1,
+            "text": "Turn on the light",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Turn off the light",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "The sky is green",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "I throw plastic",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "💡"
+      }
     ]
   },
   {
@@ -160,11 +1980,151 @@
     "title": "Level 14: Frases Curtas 2",
     "description": "Expressões ambientais",
     "questions": [
-      { "id": 1401, "type": "sentence", "promptPt": "Plantar uma árvore é bom", "promptEn": "Planting a tree is good", "options": [ { "id": 1, "text": "Planting a tree is bad", "isCorrect": false }, { "id": 2, "text": "Planting a tree is good", "isCorrect": true } ] },
-      { "id": 1402, "type": "sentence", "promptPt": "Não jogue lixo", "promptEn": "Do not litter", "options": [ { "id": 1, "text": "Litter here", "isCorrect": false }, { "id": 2, "text": "Do not litter", "isCorrect": true } ] },
-      { "id": 1403, "type": "sentence", "promptPt": "Use uma bicicleta", "promptEn": "Use a bicycle", "options": [ { "id": 1, "text": "Use a car", "isCorrect": false }, { "id": 2, "text": "Use a bicycle", "isCorrect": true } ] },
-      { "id": 1404, "type": "sentence", "promptPt": "O rio é azul", "promptEn": "The river is blue", "options": [ { "id": 1, "text": "The river is blue", "isCorrect": true }, { "id": 2, "text": "The river is green", "isCorrect": false } ] },
-      { "id": 1405, "type": "sentence", "promptPt": "Nós somos felizes", "promptEn": "We are happy", "options": [ { "id": 1, "text": "We are sad", "isCorrect": false }, { "id": 2, "text": "We are happy", "isCorrect": true } ] }
+      {
+        "id": 1401,
+        "type": "sentence",
+        "promptPt": "Plantar uma árvore é bom",
+        "promptEn": "Planting a tree is good",
+        "options": [
+          {
+            "id": 1,
+            "text": "Planting a tree is bad",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Planting a tree is good",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Throw trash",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Use a car",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🌳"
+      },
+      {
+        "id": 1402,
+        "type": "sentence",
+        "promptPt": "Não jogue lixo",
+        "promptEn": "Do not litter",
+        "options": [
+          {
+            "id": 1,
+            "text": "Litter here",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Do not litter",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Use a car",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "The river is green",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🗑️"
+      },
+      {
+        "id": 1403,
+        "type": "sentence",
+        "promptPt": "Use uma bicicleta",
+        "promptEn": "Use a bicycle",
+        "options": [
+          {
+            "id": 1,
+            "text": "Use a car",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Use a bicycle",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "The river is green",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Cutting a tree is good",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🚲"
+      },
+      {
+        "id": 1404,
+        "type": "sentence",
+        "promptPt": "O rio é azul",
+        "promptEn": "The river is blue",
+        "options": [
+          {
+            "id": 1,
+            "text": "The river is blue",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "The river is green",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "The ocean is dry",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Cutting a tree is good",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🌊"
+      },
+      {
+        "id": 1405,
+        "type": "sentence",
+        "promptPt": "Nós somos felizes",
+        "promptEn": "We are happy",
+        "options": [
+          {
+            "id": 1,
+            "text": "We are sad",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "We are happy",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Cutting a tree is good",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "The river is green",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "😊"
+      }
     ]
   },
   {
@@ -172,11 +2132,151 @@
     "title": "Level 15: O Desafio Final!",
     "description": "Prove que você é um Guardião Eco-Bilingue!",
     "questions": [
-      { "id": 1501, "type": "sentence", "promptPt": "Eu sou um guardião", "promptEn": "I am a guardian", "options": [ { "id": 1, "text": "I am a guardian", "isCorrect": true }, { "id": 2, "text": "I am a monster", "isCorrect": false } ] },
-      { "id": 1502, "type": "sentence", "promptPt": "Nós protegemos o planeta", "promptEn": "We protect the planet", "options": [ { "id": 1, "text": "We destroy the planet", "isCorrect": false }, { "id": 2, "text": "We protect the planet", "isCorrect": true } ] },
-      { "id": 1503, "type": "sentence", "promptPt": "Energia limpa é o futuro", "promptEn": "Clean energy is the future", "options": [ { "id": 1, "text": "Clean energy is the future", "isCorrect": true }, { "id": 2, "text": "Dirty energy is the future", "isCorrect": false } ] },
-      { "id": 1504, "type": "sentence", "promptPt": "Recicle todos os dias", "promptEn": "Recycle every day", "options": [ { "id": 1, "text": "Recycle every year", "isCorrect": false }, { "id": 2, "text": "Recycle every day", "isCorrect": true } ] },
-      { "id": 1505, "type": "sentence", "promptPt": "Salve o mundo!", "promptEn": "Save the world!", "options": [ { "id": 1, "text": "Save the world!", "isCorrect": true }, { "id": 2, "text": "Destroy the world!", "isCorrect": false } ] }
+      {
+        "id": 1501,
+        "type": "sentence",
+        "promptPt": "Eu sou um guardião",
+        "promptEn": "I am a guardian",
+        "options": [
+          {
+            "id": 1,
+            "text": "I am a guardian",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "I am a monster",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Dirty energy is the future",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Waste everything",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🛡️"
+      },
+      {
+        "id": 1502,
+        "type": "sentence",
+        "promptPt": "Nós protegemos o planeta",
+        "promptEn": "We protect the planet",
+        "options": [
+          {
+            "id": 1,
+            "text": "We destroy the planet",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "We protect the planet",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "I am a villain",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Dirty energy is the future",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🌍"
+      },
+      {
+        "id": 1503,
+        "type": "sentence",
+        "promptPt": "Energia limpa é o futuro",
+        "promptEn": "Clean energy is the future",
+        "options": [
+          {
+            "id": 1,
+            "text": "Clean energy is the future",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "Dirty energy is the future",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Waste everything",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Destroy the world!",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "⚡"
+      },
+      {
+        "id": 1504,
+        "type": "sentence",
+        "promptPt": "Recicle todos os dias",
+        "promptEn": "Recycle every day",
+        "options": [
+          {
+            "id": 1,
+            "text": "Recycle every year",
+            "isCorrect": false
+          },
+          {
+            "id": 2,
+            "text": "Recycle every day",
+            "isCorrect": true
+          },
+          {
+            "id": 3,
+            "text": "Dirty energy is the future",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Destroy the world!",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "♻️"
+      },
+      {
+        "id": 1505,
+        "type": "sentence",
+        "promptPt": "Salve o mundo!",
+        "promptEn": "Save the world!",
+        "options": [
+          {
+            "id": 1,
+            "text": "Save the world!",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "Destroy the world!",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Waste everything",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "We destroy the planet",
+            "isCorrect": false
+          }
+        ],
+        "imageUrl": "🦸"
+      }
     ]
   }
 ]

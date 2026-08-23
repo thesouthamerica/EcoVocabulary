@@ -8,6 +8,12 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@vueuse/motion/nuxt'
   ],
+  supabase: {
+    redirect: false,
+    redirectOptions: {
+      exclude: ['/*']
+    }
+  },
   css: ['~/assets/css/main.css'],
   nitro: {
     preset: 'cloudflare-pages'

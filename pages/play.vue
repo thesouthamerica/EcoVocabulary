@@ -41,12 +41,18 @@
             Excelente trabalho! Você desbloqueou o próximo nível.
           </p>
           
-          <button v-if="passedLevel" @click="gameStore.proceedToNextLevel()" class="btn-primary w-full sm:w-auto px-10 text-xl py-4 mx-auto flex items-center justify-center gap-2">
-            Próximo Nível ➡️
-          </button>
-          <button v-else @click="gameStore.retryLevel()" class="btn-secondary w-full sm:w-auto px-10 text-xl py-4 mx-auto flex items-center justify-center gap-2">
-            🔄 Tentar Novamente
-          </button>
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-lg mx-auto">
+            <button v-if="passedLevel" @click="handleProceed" class="btn-primary w-full sm:w-auto px-10 text-xl py-4 flex items-center justify-center gap-2 flex-1">
+              Próximo Nível ➡️
+            </button>
+            <button v-else @click="gameStore.retryLevel()" class="btn-secondary w-full sm:w-auto px-10 text-xl py-4 flex items-center justify-center gap-2 flex-1">
+              🔄 Tentar Novamente
+            </button>
+            
+            <NuxtLink to="/menu" class="w-full sm:w-auto px-6 py-4 font-bold text-gray-500 hover:text-eco-blue transition-colors text-center border-2 border-transparent hover:border-gray-200 rounded-full flex-1">
+              🏠 Voltar ao Menu
+            </NuxtLink>
+          </div>
         </div>
       </div>
 
@@ -63,6 +69,7 @@ import QuestionCard from '~/components/game/QuestionCard.vue'
 
 const gameStore = useGameStore()
 const router = useRouter()
+const supabase = useSupabaseClient()
 
 const passedLevel = computed(() => gameStore.levelScore >= 4)
 
@@ -80,6 +87,10 @@ watch(() => gameStore.isFinished, (finished) => {
 
 const handleAnswer = (isCorrect) => {
   gameStore.answerQuestion(isCorrect)
+}
+
+const handleProceed = () => {
+  gameStore.proceedToNextLevel(supabase)
 }
 </script>
 
