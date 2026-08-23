@@ -28,9 +28,34 @@ export const useGameStore = defineStore('game', {
     isFinished: (state) => state.currentLevelIndex >= state.levels.length
   },
   actions: {
-    login(name: string) {
+    async login(name: string) {
       this.user.name = name
       this.user.isLoggedIn = true
+
+      try {
+        const supabase = useSupabaseClient()
+        
+        const { data, error } = await supabase
+          .from('user_progress')
+          .select('score, current_level_index')
+          .eq('name', name)
+          .single()
+          
+        if (data) {
+          // Recover progress
+          this.score = data.score || 0
+          this.currentLevelIndex = data.current_level_index || 0
+        } else {
+          // Create new user profile
+          await supabase.from('user_progress').insert({
+            name: name,
+            score: 0,
+            current_level_index: 0
+          })
+        }
+      } catch (err) {
+        console.warn("Could not sync with Supabase (Check if keys are set):", err)
+      }
     },
     answerQuestion(isCorrect: boolean) {
       if (isCorrect) {
@@ -52,7 +77,7 @@ export const useGameStore = defineStore('game', {
       this.levelScore = 0
       this.isLevelFinished = false
     },
-    proceedToNextLevel() {
+    async proceedToNextLevel() {
       this.score += this.levelScore
       this.levelScore = 0
       this.isLevelFinished = false
@@ -62,6 +87,19 @@ export const useGameStore = defineStore('game', {
         this.currentQuestionIndex = 0
       } else {
         this.currentLevelIndex++ 
+      }
+
+      // Save to Supabase
+      if (this.user.isLoggedIn) {
+        try {
+          const supabase = useSupabaseClient()
+          await supabase.from('user_progress').update({
+            score: this.score,
+            current_level_index: this.currentLevelIndex
+          }).eq('name', this.user.name)
+        } catch (err) {
+          console.warn("Could not save to Supabase:", err)
+        }
       }
     },
     previousQuestion() {

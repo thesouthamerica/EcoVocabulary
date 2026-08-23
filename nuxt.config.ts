@@ -4,6 +4,7 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
+    '@nuxtjs/supabase',
     '@vueuse/nuxt',
     '@vueuse/motion/nuxt'
   ],
