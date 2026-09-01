@@ -1,6 +1,8 @@
 <template>
-  <div class="flex-1 flex items-center justify-center min-h-[80vh] py-8">
-    <div ref="certificateRef" class="glass-panel w-full max-w-2xl p-8 sm:p-14 text-center relative overflow-hidden bg-white shadow-2xl mx-4">
+  <div class="flex-1 flex items-center justify-center min-h-[80vh] py-8 overflow-x-hidden">
+    <div class="relative w-full max-w-2xl mx-4 z-10">
+      
+      <div ref="certificateRef" class="glass-panel w-full p-8 sm:p-14 text-center relative overflow-hidden bg-white shadow-2xl rounded-3xl">
       
       <!-- Certificate decor -->
       <div class="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
@@ -10,7 +12,7 @@
 
       <div class="relative z-10 animate-scale-up">
         <div class="w-32 h-32 mx-auto bg-eco-yellow text-white rounded-full flex items-center justify-center text-6xl mb-8 shadow-2xl border-4 border-white">
-          🏆
+          <img src="https://hkddkejyzdvepdlhadlf.supabase.co/storage/v1/object/public/imagens%20exercicios/images/congratulations.png" alt="Congratulations" class="h-32 w-auto" />
         </div>
         
         <h1 class="text-4xl sm:text-5xl font-black text-eco-green mb-4 leading-tight">
@@ -37,6 +39,7 @@
         </button>
       </div>
 
+    </div>
     </div>
   </div>
 </template>
