@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import levelsData from '~/data/levels.json'
+
 
 export const useGameStore = defineStore('game', {
   state: () => ({
@@ -8,7 +8,7 @@ export const useGameStore = defineStore('game', {
       displayName: '',
       isLoggedIn: false,
     },
-    levels: levelsData,
+    levels: [] as any[],
     currentLevelIndex: 0,
     maxUnlockedLevel: 0,
     currentQuestionIndex: 0,
@@ -30,6 +30,28 @@ export const useGameStore = defineStore('game', {
     isFinished: (state) => state.currentLevelIndex >= state.levels.length
   },
   actions: {
+    async fetchLevels(supabase: any, force = false) {
+      if (this.levels.length > 0 && !force) return; // Já carregou
+
+      try {
+        const { data: levelsData, error: levelsError } = await supabase.from('levels').select('*').order('id')
+        if (levelsError) throw levelsError
+
+        const { data: questionsData, error: questionsError } = await supabase.from('questions').select('*').order('id')
+        if (questionsError) throw questionsError
+
+        const nestedLevels = levelsData
+          .map((level: any) => ({
+            ...level,
+            questions: questionsData.filter((q: any) => q.level_id === level.id)
+          }))
+          .filter(level => level.questions.length === 5)
+
+        this.levels = nestedLevels
+      } catch (err) {
+        console.error("Error fetching levels from Supabase:", err)
+      }
+    },
     async login(firstName: string, lastName: string, birthDate: string, supabase: any) {
       // Limpa os dados do usuário anterior antes de carregar o novo
       this.resetGame()

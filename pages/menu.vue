@@ -8,21 +8,42 @@
       </p>
 
       <!-- Level Grid -->
-      <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 w-full px-4">
+      <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 w-full px-4 min-h-[300px]">
         <button
-          v-for="(level, index) in gameStore.levels"
-          :key="index"
-          @click="selectLevel(index)"
-          :disabled="index > gameStore.maxUnlockedLevel"
+          v-for="(level, localIndex) in paginatedLevels"
+          :key="currentPage * itemsPerPage + localIndex"
+          @click="selectLevel(currentPage * itemsPerPage + localIndex)"
+          :disabled="(currentPage * itemsPerPage + localIndex) > gameStore.maxUnlockedLevel"
           class="aspect-square rounded-2xl flex flex-col items-center justify-center p-4 transition-all duration-300 font-bold border-4"
           :class="[
-            index <= gameStore.maxUnlockedLevel 
+            (currentPage * itemsPerPage + localIndex) <= gameStore.maxUnlockedLevel 
               ? 'bg-white border-eco-green text-eco-green hover:-translate-y-2 hover:shadow-lg hover:shadow-eco-green/20 cursor-pointer shadow-md' 
               : 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed opacity-70'
           ]"
         >
-          <span class="text-3xl mb-1">{{ index <= gameStore.maxUnlockedLevel ? '🌟' : '🔒' }}</span>
-          <span class="text-xl">{{ index + 1 }}</span>
+          <span class="text-3xl mb-1">{{ (currentPage * itemsPerPage + localIndex) <= gameStore.maxUnlockedLevel ? '🌟' : '🔒' }}</span>
+          <span class="text-xl">{{ (currentPage * itemsPerPage + localIndex) + 1 }}</span>
+        </button>
+      </div>
+
+      <!-- Paginação -->
+      <div v-if="totalPages > 1" class="flex items-center justify-center gap-6 mt-8 animate-fade-in-up">
+        <button 
+          @click="prevPage" 
+          :disabled="currentPage === 0"
+          class="px-6 py-2 rounded-full font-bold transition-colors"
+          :class="currentPage === 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-eco-blue text-white hover:bg-eco-blue-light shadow-md'"
+        >
+          Anterior
+        </button>
+        <span class="font-bold text-gray-600">Página {{ currentPage + 1 }} de {{ totalPages }}</span>
+        <button 
+          @click="nextPage" 
+          :disabled="currentPage >= totalPages - 1"
+          class="px-6 py-2 rounded-full font-bold transition-colors"
+          :class="currentPage >= totalPages - 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-eco-blue text-white hover:bg-eco-blue-light shadow-md'"
+        >
+          Próxima
         </button>
       </div>
 
@@ -41,16 +62,42 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useGameStore } from '~/stores/game'
 
 const gameStore = useGameStore()
 const router = useRouter()
 
+const itemsPerPage = 20
+const currentPage = ref(0)
+
+const totalPages = computed(() => {
+  return Math.ceil(gameStore.levels.length / itemsPerPage)
+})
+
+const paginatedLevels = computed(() => {
+  const start = currentPage.value * itemsPerPage
+  const end = start + itemsPerPage
+  return gameStore.levels.slice(start, end)
+})
+
+const prevPage = () => {
+  if (currentPage.value > 0) currentPage.value--
+}
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value - 1) currentPage.value++
+}
+
 onMounted(() => {
   if (!gameStore.user.isLoggedIn) {
     router.push('/login')
+  } else {
+    // Define a página inicial baseada no nível máximo desbloqueado (para o usuário não ter que clicar sempre em próxima)
+    const maxIndex = gameStore.maxUnlockedLevel
+    const safeIndex = Math.min(maxIndex, Math.max(0, gameStore.levels.length - 1))
+    currentPage.value = Math.floor(safeIndex / itemsPerPage)
   }
 })
 
