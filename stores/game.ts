@@ -30,14 +30,23 @@ export const useGameStore = defineStore('game', {
     isFinished: (state) => state.currentLevelIndex >= state.levels.length
   },
   actions: {
-    async fetchLevels(supabase: any, force = false) {
+    async fetchLevels(supabase: any, adminId: string | null = null, schoolYear: number = 0, force = false) {
       if (this.levels.length > 0 && !force) return; // Já carregou
 
       try {
-        const { data: levelsData, error: levelsError } = await supabase.from('levels').select('*').order('id')
+        let levelsQuery = supabase.from('levels').select('*').order('id')
+        let questionsQuery = supabase.from('questions').select('*').order('id')
+        
+        if (adminId) {
+          levelsQuery = levelsQuery.eq('admin_id', adminId).eq('school_year', schoolYear)
+        } else {
+          levelsQuery = levelsQuery.eq('school_year', 0) // Níveis do master admin ou visitantes
+        }
+
+        const { data: levelsData, error: levelsError } = await levelsQuery
         if (levelsError) throw levelsError
 
-        const { data: questionsData, error: questionsError } = await supabase.from('questions').select('*').order('id')
+        const { data: questionsData, error: questionsError } = await questionsQuery
         if (questionsError) throw questionsError
 
         const nestedLevels = levelsData
@@ -52,7 +61,17 @@ export const useGameStore = defineStore('game', {
         console.error("Error fetching levels from Supabase:", err)
       }
     },
-    async login(firstName: string, lastName: string, birthDate: string, supabase: any) {
+    async fetchTeachers(supabase: any) {
+      try {
+        const { data, error } = await supabase.from('admins').select('id, name').eq('role', 'subadmin')
+        if (error) throw error
+        return data || []
+      } catch (err) {
+        console.error("Error fetching teachers:", err)
+        return []
+      }
+    },
+    async login(firstName: string, lastName: string, schoolYear: number, teacherId: string | null, isVisitor: boolean, supabase: any) {
       // Limpa os dados do usuário anterior antes de carregar o novo
       this.resetGame()
       
@@ -62,17 +81,33 @@ export const useGameStore = defineStore('game', {
         ).join(' ');
       };
 
-      const formattedFirstName = formatName(firstName);
-      const formattedLastName = formatName(lastName);
+      const formattedFirstName = isVisitor ? "Visitante" : formatName(firstName);
+      const formattedLastName = isVisitor ? "" : formatName(lastName);
       
-      const slug = `${formattedFirstName}-${formattedLastName}-${birthDate}`.toLowerCase().replace(/\s+/g, '-')
-      const displayName = `${formattedFirstName} ${formattedLastName}`
+      const slug = isVisitor 
+        ? `visitante-${Math.floor(Math.random()*10000)}` 
+        : `${formattedFirstName}-${formattedLastName}`.toLowerCase().replace(/\s+/g, '-')
+      
+      const displayName = isVisitor ? "Visitante" : `${formattedFirstName} ${formattedLastName}`
       
       this.user.dbId = slug
       this.user.displayName = displayName
       this.user.isLoggedIn = true
 
       try {
+        if (!isVisitor) {
+          const { data: whitelistData, error: whitelistError } = await supabase
+            .from('students_whitelist')
+            .select('*')
+            .eq('admin_id', teacherId)
+            .eq('school_year', schoolYear)
+            .eq('slug', slug)
+            .single()
+            
+          if (whitelistError || !whitelistData) {
+            throw new Error("Aluno não encontrado na lista desta turma.")
+          }
+        }
         
         const { data, error } = await supabase
           .from('user_progress')
@@ -95,13 +130,22 @@ export const useGameStore = defineStore('game', {
           const { error: insertError } = await supabase.from('user_progress').insert({
             name: slug,
             score: 0,
-            current_level_index: 0
+            current_level_index: 0,
+            admin_id: isVisitor ? null : teacherId,
+            school_year: isVisitor ? 0 : schoolYear
           })
           if (insertError) console.error("Supabase insert error:", insertError)
           this._shuffleCurrentLevel()
         }
-      } catch (err) {
-        console.warn("Could not sync with Supabase (Check if keys are set):", err)
+        
+        // Força buscar os níveis baseados no perfil que acabou de logar
+        await this.fetchLevels(supabase, isVisitor ? null : teacherId, isVisitor ? 0 : schoolYear, true)
+        
+        return { success: true }
+      } catch (err: any) {
+        console.warn("Login failed:", err)
+        this.logout()
+        return { success: false, error: err.message || "Erro no login" }
       }
     },
     logout() {

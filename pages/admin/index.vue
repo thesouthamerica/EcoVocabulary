@@ -1,7 +1,59 @@
 <template>
   <div class="space-y-6">
-    <div class="flex justify-between items-center">
-      <h1 class="text-3xl font-black text-gray-800">Gerenciar Níveis e Perguntas</h1>
+    <!-- Aviso se não estiver na tabela de admins -->
+    <div v-if="!adminRole && !loading" class="bg-red-50 p-6 rounded-xl border border-red-200 shadow-sm text-center">
+      <div class="text-4xl mb-3">⚠️</div>
+      <h2 class="text-xl font-black text-red-800 mb-2">Conta de Administrador Incompleta</h2>
+      <p class="text-red-700 max-w-2xl mx-auto">
+        Sua conta entrou no painel (Supabase Auth), mas você ainda não vinculou o seu ID na tabela <b>admins</b>. 
+        <br><br>
+        Vá no Supabase &gt; Authentication &gt; Copie seu UID. Depois vá em Table Editor &gt; <b>admins</b> e insira uma nova linha colando este UID. 
+      </p>
+      <div class="mt-4 text-xs font-mono bg-white inline-block px-3 py-2 rounded border border-red-100 text-red-500 font-bold">
+        Seu UID atual: {{ adminId }}
+      </div>
+    </div>
+
+    <!-- Controles de Turma e Admin -->
+    <div v-if="adminRole" class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex flex-wrap gap-6 items-center justify-between">
+      <div class="flex-1 min-w-[250px]">
+        <label class="block text-sm font-bold text-gray-700 mb-2">Turma / Ano Escolar Atual</label>
+        <select v-model="selectedSchoolYear" @change="fetchData" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-indigo-900 font-bold bg-indigo-50">
+          <option v-if="adminRole === 'master'" :value="0">🕹️ Níveis Padrão / Visitantes</option>
+          <option v-for="y in 9" :key="y" :value="y">{{ y }}º Ano do Ensino Fundamental</option>
+        </select>
+      </div>
+      <div v-if="adminRole" class="text-right bg-gray-50 px-4 py-2 rounded-lg border border-gray-100">
+        <span class="block text-xs text-gray-500 font-bold uppercase mb-1">Logado como:</span>
+        <span class="text-indigo-700 font-bold text-sm">{{ adminName }} ({{ adminRole }})</span>
+      </div>
+    </div>
+
+    <!-- O Resto do Painel só aparece se ele for um admin validado -->
+    <div v-if="adminRole" class="space-y-6">
+      
+      <!-- Gerenciar Alunos da Turma (apenas turmas 1 a 9) -->
+      <div v-if="selectedSchoolYear > 0" class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+      <h2 class="text-xl font-black text-gray-800 mb-4 flex items-center gap-2">
+        <span>👨‍🎓 Alunos da Turma</span>
+        <span class="text-sm font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-md">{{ students.length }} cadastrados</span>
+      </h2>
+      <form @submit.prevent="addStudent" class="flex flex-wrap gap-3 mb-4">
+        <input v-model="newStudentFirst" type="text" placeholder="Nome" required class="flex-1 min-w-[150px] px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" />
+        <input v-model="newStudentLast" type="text" placeholder="Sobrenome" required class="flex-1 min-w-[150px] px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" />
+        <button type="submit" class="btn-primary !py-2 !px-6 !rounded-lg whitespace-nowrap">Adicionar Aluno</button>
+      </form>
+      <div class="flex flex-wrap gap-2 mt-4">
+        <span v-for="student in students" :key="student.id" class="px-3 py-1.5 bg-green-50 text-green-700 rounded-full border border-green-200 text-sm font-bold flex items-center gap-2 shadow-sm">
+          {{ student.first_name }} {{ student.last_name }}
+          <button @click="removeStudent(student.id)" class="text-red-400 hover:text-red-700 hover:bg-red-50 rounded-full w-5 h-5 flex items-center justify-center transition-colors" title="Remover">×</button>
+        </span>
+        <span v-if="students.length === 0" class="text-sm text-gray-500 italic p-2">Nenhum aluno cadastrado para o {{ selectedSchoolYear }}º Ano. Adicione acima para autorizá-los a logar.</span>
+      </div>
+    </div>
+
+    <div class="flex justify-between items-center mt-8">
+      <h2 class="text-2xl font-black text-gray-800">Níveis desta Turma</h2>
       <button @click="openLevelModal(null)" class="btn-secondary !py-2 !px-4 !rounded-lg flex items-center gap-2">
         <span>+ Novo Nível</span>
       </button>
@@ -98,6 +150,8 @@
         </table>
       </div>
     </div>
+    
+    </div> <!-- Fechamento da div do adminRole -->
 
     <!-- Modal Adicionar/Editar Nível -->
     <div v-if="showLevelModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -193,9 +247,22 @@ definePageMeta({
 
 const supabase = useSupabaseClient()
 const gameStore = useGameStore()
+
+// STATES GLOBAIS DA PÁGINA
+const userAuth = ref(null)
+const adminId = ref(null)
+const adminRole = ref(null)
+const adminName = ref('')
+const selectedSchoolYear = ref(1)
+
 const levels = ref([])
 const allQuestions = ref([])
+const students = ref([])
 const loading = ref(true)
+
+// FORM STATES ALUNOS
+const newStudentFirst = ref('')
+const newStudentLast = ref('')
 
 const expandedLevelId = ref(null)
 
@@ -217,18 +284,96 @@ const formQuestion = ref({
 
 const fetchData = async () => {
   loading.value = true
+  
+  // 1. Pega usuário logado
+  if (!userAuth.value) {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+       loading.value = false; return;
+    }
+    userAuth.value = user
+    adminId.value = user.id
+    
+    // Busca info na tabela admins
+    const { data: adData } = await supabase.from('admins').select('*').eq('id', user.id).single()
+    if (adData) {
+       adminRole.value = adData.role
+       adminName.value = adData.name
+       if (adData.role === 'master') {
+          selectedSchoolYear.value = 0
+       }
+    }
+  }
+
+  // 2. Busca níveis
+  let levelsQuery = supabase.from('levels').select('*').order('id')
+  
+  if (selectedSchoolYear.value > 0) {
+    levelsQuery = levelsQuery.eq('school_year', selectedSchoolYear.value).eq('admin_id', adminId.value)
+  } else {
+    levelsQuery = levelsQuery.eq('school_year', 0)
+  }
+
   const [resLevels, resQuestions] = await Promise.all([
-    supabase.from('levels').select('*').order('id'),
+    levelsQuery,
     supabase.from('questions').select('*').order('id')
   ])
   
   if (resLevels.data) levels.value = resLevels.data
   if (resQuestions.data) allQuestions.value = resQuestions.data
   
-  // Mantém o frontend (loja Pinia) atualizado com as mudanças do Admin
-  await gameStore.fetchLevels(supabase, true)
+  // 3. Busca Alunos da Whitelist
+  if (selectedSchoolYear.value > 0 && adminId.value) {
+    const { data: stData } = await supabase.from('students_whitelist')
+      .select('*')
+      .eq('admin_id', adminId.value)
+      .eq('school_year', selectedSchoolYear.value)
+      .order('first_name')
+    students.value = stData || []
+  } else {
+    students.value = []
+  }
+  
+  // Atualiza Store Global para Preview
+  await gameStore.fetchLevels(supabase, adminId.value, selectedSchoolYear.value, true)
   
   loading.value = false
+}
+
+const addStudent = async () => {
+  if (!newStudentFirst.value.trim() || !newStudentLast.value.trim()) return
+  
+  const formatName = (str) => {
+    return str.trim().split(/\s+/).map(word => 
+      word ? word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : ''
+    ).join(' ');
+  };
+  const fFirst = formatName(newStudentFirst.value)
+  const fLast = formatName(newStudentLast.value)
+  const slug = `${fFirst}-${fLast}`.toLowerCase().replace(/\s+/g, '-')
+  
+  const { error } = await supabase.from('students_whitelist').insert({
+    admin_id: adminId.value,
+    school_year: selectedSchoolYear.value,
+    first_name: fFirst,
+    last_name: fLast,
+    slug: slug
+  })
+  
+  if (error) {
+    if (error.code === '23505') alert("Este aluno já existe nesta turma!")
+    else alert("Erro ao adicionar: " + error.message)
+  } else {
+    newStudentFirst.value = ''
+    newStudentLast.value = ''
+    fetchData()
+  }
+}
+
+const removeStudent = async (id) => {
+  if (!confirm("Remover este aluno da turma? Ele não conseguirá mais fazer login!")) return
+  await supabase.from('students_whitelist').delete().eq('id', id)
+  fetchData()
 }
 
 onMounted(() => {
@@ -260,9 +405,16 @@ const saveLevel = async () => {
     const { error } = await supabase.from('levels').update(formLevel.value).eq('id', editingLevel.value.id)
     if (error) alert("Erro ao editar nível: " + error.message)
   } else {
-    // Definimos o ID manualmente pois os dados importados (seed) dessincronizaram a sequence do PostgreSQL
-    const maxId = levels.value.length > 0 ? Math.max(...levels.value.map(l => l.id)) : 0
-    const newLevel = { ...formLevel.value, id: maxId + 1 }
+    // Busca o ID máximo global na tabela para evitar conflito (duplicate key)
+    const { data: maxLevelData } = await supabase.from('levels').select('id').order('id', { ascending: false }).limit(1)
+    const absoluteMaxId = maxLevelData && maxLevelData.length > 0 ? maxLevelData[0].id : 0
+    
+    const newLevel = { 
+       ...formLevel.value, 
+       id: absoluteMaxId + 1,
+       admin_id: adminId.value,
+       school_year: selectedSchoolYear.value
+    }
     
     const { data, error } = await supabase.from('levels').insert([newLevel]).select()
     

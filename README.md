@@ -6,14 +6,14 @@ Bem-vindo ao **Eco-Vocabulary**! Uma aplicação web educacional, lúdica e tota
 
 O Eco-Vocabulary foi desenhado para ser muito mais que um simples jogo de perguntas. Ele é uma plataforma de aprendizado contínuo onde os pequenos aprendem palavras essenciais do inglês associando-as a belas ilustrações e emojis nativos em temas amigáveis ao meio ambiente!
 
-### 🎮 Principais Funcionalidades
+### 🎮 Principais Funcionalidades (Atualizadas!)
 
-- **Aprendizado Interativo & Dinâmico:** Diversos níveis de dificuldade abordando temas ecológicos. Graças a um avançado painel de controle, novos níveis podem ser criados, editados e publicados em tempo real.
-- **Paginação Inteligente:** O menu do jogo divide automaticamente os níveis (20 por tela) para evitar poluição visual. O sistema lembra a última página que o jogador estava e a carrega automaticamente!
-- **Painel Administrativo (CRUD Completo):** Uma área restrita com login de administrador (`/admin`), que permite aos criadores gerenciarem o conteúdo do jogo. Os níveis funcionam num sistema de "Rascunho", só sendo exibidos ao jogador após a inclusão de exatamente 5 perguntas obrigatórias.
-- **Login Amigável para Crianças:** Um sistema de login inovador sem necessidade de e-mails ou senhas complexas. Apenas Nome, Sobrenome e Data de Nascimento criam um perfil único que salva o progresso na nuvem em tempo real!
-- **Feedback Visual e Gamificação:** Uso de animações vibrantes, cores agradáveis (Eco-green, Eco-blue, Eco-yellow) e progressão que recompensa os alunos (com direito a Certificado ao final).
-- **Opções Dinâmicas:** A cada vez que uma fase é acessada, as 4 opções de resposta e a ordem das perguntas são embaralhadas para evitar "decoreba".
+- **Sistema Escolar Multi-Professor (Novo!):** Arquitetura desenhada para uso em Escolas Públicas e Particulares. O sistema possui um `Master Admin` e diversos `Sub-Admins` (Professores). Cada professor gerencia os seus próprios alunos isoladamente!
+- **Áreas por Ano Escolar (Novo!):** Os professores podem criar níveis e desafios específicos organizados do 1º ao 9º Ano do Ensino Fundamental. Uma única escola pode utilizar o aplicativo simultaneamente em várias séries com conteúdos diferentes!
+- **Whitelist Segura e Login Simplificado (Novo!):** Chega de emails e senhas para as crianças. O professor cadastra o aluno em seu painel. No login, o aluno apenas escolhe o seu Professor, o seu Ano Escolar e digita seu Nome e Sobrenome (o sistema ajusta as maiúsculas e minúsculas automaticamente para padronizar e evitar duplicidade). Apenas alunos na *whitelist* do professor conseguem entrar.
+- **Modo Visitante (Novo!):** Usuários que não estão matriculados podem explorar o jogo clicando em "Entrar como Visitante", jogando as fases padrões controladas pelo Administrador Master.
+- **Painel Administrativo Completo:** Uma área restrita (`/admin`) protegida por autenticação, onde os professores gerenciam seus Níveis, Perguntas e Alunos, além de um poderoso **Dashboard** com estatísticas de acerto e métricas da turma.
+- **Paginação e Gamificação Inteligente:** O jogo divide automaticamente as fases, embaralha perguntas/respostas para evitar decoreba e recompensa o aluno a cada avanço!
 
 ---
 
@@ -23,8 +23,8 @@ Este projeto foi construído utilizando excelentes práticas modernas de desenvo
 
 - **Frontend:** [Vue.js 3](https://vuejs.org/) & [Nuxt.js 3](https://nuxt.com/) (Composition API, Roteamento Automático)
 - **Estilização:** [TailwindCSS](https://tailwindcss.com/) & CSS Vanilla para efeitos de Glassmorphism, responsividade e micro-animações avançadas.
-- **Gerenciamento de Estado:** [Pinia](https://pinia.vuejs.org/) para controle do fluxo de perguntas, progresso da loja e pontuação do usuário.
-- **Banco de Dados & Autenticação (BaaS):** [Supabase](https://supabase.com/). O projeto utiliza um esquema robusto em PostgreSQL que abriga tabelas interligadas para Níveis, Perguntas e Progresso de Usuário, protegido por Políticas de Segurança (RLS).
+- **Gerenciamento de Estado:** [Pinia](https://pinia.vuejs.org/) para controle do fluxo de jogo e pontuação.
+- **Banco de Dados & Autenticação:** [Supabase](https://supabase.com/). O projeto utiliza PostgreSQL para abrigar de forma relacional as tabelas de `admins`, `students_whitelist`, `levels`, `questions` e controle de progresso (`user_progress`, `user_answers`), protegidas por Políticas de Segurança Rigorosas (RLS).
 
 ---
 
@@ -34,7 +34,7 @@ Se você deseja contribuir ou apenas rodar o jogo na sua máquina, siga os passo
 
 ### Pré-requisitos
 Certifique-se de ter o [Node.js](https://nodejs.org/) instalado.
-Tenha certeza de que suas chaves do Supabase estão configuradas no arquivo `.env`.
+Tenha certeza de que suas chaves do Supabase estão configuradas no arquivo `.env`. É necessário também ter rodado os scripts SQL de migração para as tabelas de `admins` e `students_whitelist`.
 
 ### Instalação
 
