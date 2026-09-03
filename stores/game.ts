@@ -45,7 +45,7 @@ export const useGameStore = defineStore('game', {
             ...level,
             questions: questionsData.filter((q: any) => q.level_id === level.id)
           }))
-          .filter(level => level.questions.length === 5)
+          .filter((level: any) => level.questions.length === 5)
 
         this.levels = nestedLevels
       } catch (err) {
@@ -56,8 +56,17 @@ export const useGameStore = defineStore('game', {
       // Limpa os dados do usuário anterior antes de carregar o novo
       this.resetGame()
       
-      const slug = `${firstName.trim()}-${lastName.trim()}-${birthDate}`.toLowerCase().replace(/\s+/g, '-')
-      const displayName = `${firstName.trim()} ${lastName.trim()}`
+      const formatName = (str: string) => {
+        return str.trim().split(/\s+/).map(word => 
+          word ? word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : ''
+        ).join(' ');
+      };
+
+      const formattedFirstName = formatName(firstName);
+      const formattedLastName = formatName(lastName);
+      
+      const slug = `${formattedFirstName}-${formattedLastName}-${birthDate}`.toLowerCase().replace(/\s+/g, '-')
+      const displayName = `${formattedFirstName} ${formattedLastName}`
       
       this.user.dbId = slug
       this.user.displayName = displayName
@@ -101,9 +110,26 @@ export const useGameStore = defineStore('game', {
       this.user.isLoggedIn = false
       this.resetGame()
     },
-    answerQuestion(isCorrect: boolean) {
+    async answerQuestion(isCorrect: boolean, supabase: any) {
       if (isCorrect) {
         this.levelScore += 1
+      }
+      
+      if (this.user.isLoggedIn && supabase) {
+        const level = this.currentLevel
+        const question = this.currentQuestion
+        if (level && question) {
+          try {
+            await supabase.from('user_answers').insert({
+              user_id: this.user.dbId,
+              level_id: level.id,
+              question_id: question.id,
+              is_correct: isCorrect
+            })
+          } catch (e) {
+            console.error("Error logging answer:", e)
+          }
+        }
       }
       
       this.nextQuestion()
@@ -211,7 +237,7 @@ export const useGameStore = defineStore('game', {
       }
       
       // Shuffle options for each question
-      level.questions.forEach(q => {
+      level.questions.forEach((q: any) => {
         if (q.options) {
           for (let i = q.options.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));

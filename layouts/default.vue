@@ -54,9 +54,9 @@
     <footer class="bg-white/60 backdrop-blur-sm py-4 sm:py-6 text-center text-xs sm:text-sm text-gray-500 mt-auto z-10 border-t border-white/50">
       <p class="font-medium">Desenvolvido por <span class="font-bold text-gray-700">Leonardo Bezerra</span></p>
       <div class="mt-2 flex justify-center gap-4">
-        <a href="#" class="text-eco-blue hover:text-eco-blue-light transition-colors font-bold">GitHub</a>
+        <a href="https://github.com/thesouthamerica" class="text-eco-blue hover:text-eco-blue-light transition-colors font-bold">GitHub</a>
         <a href="#" class="text-eco-blue hover:text-eco-blue-light transition-colors font-bold">LinkedIn</a>
-        <a href="#" class="text-eco-blue hover:text-eco-blue-light transition-colors font-bold">Instagram</a>
+        <a href="https://www.instagram.com/leonardo.bezerra39/" class="text-eco-blue hover:text-eco-blue-light transition-colors font-bold">Instagram</a>
       </div>
       <p class="font-medium mt-3 text-gray-400">Erro com a aplicação? Entre em contato pelos links acima!</p>
     </footer>

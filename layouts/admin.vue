@@ -5,6 +5,9 @@
         Painel Admin
       </div>
       <div class="flex items-center gap-4">
+        <NuxtLink to="/admin" class="text-sm font-bold text-gray-500 hover:text-eco-blue transition-colors">Gerenciar Níveis</NuxtLink>
+        <NuxtLink to="/admin/dashboard" class="text-sm font-bold text-gray-500 hover:text-eco-blue transition-colors">Dashboard</NuxtLink>
+        <div class="h-4 w-px bg-gray-300 mx-2"></div>
         <NuxtLink to="/" class="text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors">Voltar ao Jogo</NuxtLink>
         <button @click="logout" v-if="user" class="text-sm font-bold text-red-500 hover:text-red-600 transition-colors px-3 py-1 rounded-md hover:bg-red-50">Sair</button>
       </div>

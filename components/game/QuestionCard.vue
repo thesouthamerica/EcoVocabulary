@@ -5,10 +5,17 @@
       <TranslationHover :translation="question.promptEn">
         <h2 class="text-3xl sm:text-4xl font-black text-gray-800 cursor-help mb-4 px-4">{{ question.promptPt }}</h2>
       </TranslationHover>
-      
-      <div v-if="question.imageUrl" class="mt-6 flex justify-center">
-        <TranslationHover :translation="question.imageLabelEn">
-          <div class="relative w-48 h-48 sm:w-64 sm:h-64 rounded-3xl overflow-hidden border-4 border-white shadow-lg cursor-help transition-transform hover:scale-105 bg-white flex items-center justify-center text-[100px] sm:text-[130px]">
+      <div v-if="question.imageUrl" class="mt-6 flex justify-center w-full">
+        <TranslationHover 
+          :translation="question.imageLabelEn"
+          :class="question.imageUrl && question.imageUrl.startsWith('http') ? 'w-full' : ''"
+        >
+          <div :class="[
+            'relative rounded-3xl overflow-hidden border-4 border-white shadow-lg cursor-help transition-transform hover:scale-105 bg-white flex items-center justify-center mx-auto',
+            question.imageUrl && question.imageUrl.startsWith('http') 
+              ? 'w-full h-48 sm:h-72' 
+              : 'w-48 h-48 sm:w-64 sm:h-64 text-[100px] sm:text-[130px]'
+          ]">
             <img v-if="question.imageUrl && question.imageUrl.startsWith('http')" :src="question.imageUrl" alt="Imagem da pergunta" class="w-full h-full object-cover" />
             <span v-else>{{ question.imageUrl }}</span>
           </div>
