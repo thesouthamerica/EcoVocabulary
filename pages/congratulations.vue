@@ -48,6 +48,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useGameStore } from '~/stores/game'
+import html2canvas from 'html2canvas'
 
 const gameStore = useGameStore()
 const router = useRouter()
@@ -71,7 +72,6 @@ const downloadCertificate = async () => {
   
   isGenerating.value = true
   try {
-    const html2canvas = (await import('html2canvas')).default
     const canvas = await html2canvas(certificateRef.value, {
       scale: 2,
       backgroundColor: '#ffffff',

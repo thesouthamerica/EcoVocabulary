@@ -144,27 +144,68 @@
 </template>
 
 <script setup>
-import { computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { Doughnut } from 'vue-chartjs'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
+import { useSupabaseClient } from '#imports'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
 const props = defineProps({
   schoolYear: { type: Number, required: true },
-  calendarYear: { type: Number, required: true }
+  calendarYear: { type: Number, required: true },
+  adminId: { type: String, required: true }
 })
 
-const { data: metrics, pending, error, refresh } = await useFetch('/api/admin/class-metrics', {
-  query: computed(() => ({
-    schoolYear: props.schoolYear,
-    calendarYear: props.calendarYear
-  }))
+const supabase = useSupabaseClient()
+const metrics = ref(null)
+const pending = ref(true)
+const error = ref(null)
+
+const loadClassMetrics = async () => {
+  pending.value = true
+  error.value = null
+  try {
+    const { data } = await supabase
+      .from('students_whitelist')
+      .select('slug')
+      .eq('admin_id', props.adminId)
+      .eq('school_year', props.schoolYear)
+      .eq('calendar_year', props.calendarYear)
+    
+    const slugs = (data || []).map(s => s.slug)
+    
+    if (slugs.length === 0) {
+      metrics.value = {
+        overview: { activeStudents: 0, totalAnswers: 0, avgAccuracy: 0 },
+        hardestQuestions: [],
+        easiestQuestions: [],
+        categoryPerformance: [],
+        guessVsDifficulty: []
+      }
+      return
+    }
+
+    const response = await $fetch('/api/admin/class-metrics', {
+      query: { studentSlugs: slugs.join(',') }
+    })
+    
+    metrics.value = response
+  } catch (err) {
+    console.error(err)
+    error.value = err
+  } finally {
+    pending.value = false
+  }
+}
+
+onMounted(() => {
+  loadClassMetrics()
 })
 
 // Recarregar os dados se o ano mudar
 watch(() => [props.schoolYear, props.calendarYear], () => {
-  refresh()
+  loadClassMetrics()
 })
 
 const chartOptions = {

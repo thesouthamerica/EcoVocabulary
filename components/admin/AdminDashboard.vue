@@ -16,7 +16,7 @@
     </div>
 
     <div v-if="viewMode === 'class'">
-      <ClassOverview :schoolYear="schoolYear" :calendarYear="calendarYear" />
+      <ClassOverview :schoolYear="schoolYear" :calendarYear="calendarYear" :adminId="adminId" />
     </div>
     
     <div v-if="viewMode === 'student'">

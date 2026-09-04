@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
 
   const { data: answers, error: answersError } = await supabase
     .from('user_answers')
-    .select('*, questions(title, category)')
+    .select('*, questions(promptPt, type)')
     .eq('user_id', studentSlug)
     .gte('created_at', thirtyDaysAgo.toISOString())
     .order('created_at', { ascending: true })
@@ -50,19 +50,19 @@ export default defineEventHandler(async (event) => {
 
   let totalCorrect = 0
   let totalAttempts = 0
-  const categoryStats = {
+  const categoryStats: Record<string, { correct: number, total: number }> = {
     'association': { correct: 0, total: 0 },
     'translation': { correct: 0, total: 0 },
     'sentence': { correct: 0, total: 0 },
   }
   
-  const dailyStats = {}
+  const dailyStats: Record<string, { correct: number, total: number }> = {}
 
   answers.forEach(a => {
     if (a.is_correct) totalCorrect++
     totalAttempts += (a.attempts || 1)
 
-    const cat = a.questions?.category || 'association'
+    const cat = a.questions?.type || 'association'
     if (!categoryStats[cat]) categoryStats[cat] = { correct: 0, total: 0 }
     categoryStats[cat].total++
     if (a.is_correct) categoryStats[cat].correct++
@@ -74,14 +74,14 @@ export default defineEventHandler(async (event) => {
     if (a.is_correct) dailyStats[day].correct++
   })
 
-  const categoryPerformance = Object.keys(categoryStats).map(k => ({
+  const categoryPerformance = Object.entries(categoryStats).map(([k, stats]) => ({
     category: k,
-    accuracy: categoryStats[k].total > 0 ? Math.round((categoryStats[k].correct / categoryStats[k].total) * 100) : 0
+    accuracy: stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0
   }))
 
-  const learningCurve = Object.keys(dailyStats).map(day => ({
+  const learningCurve = Object.entries(dailyStats).map(([day, stats]) => ({
     date: day,
-    accuracy: Math.round((dailyStats[day].correct / dailyStats[day].total) * 100)
+    accuracy: Math.round((stats.correct / stats.total) * 100)
   }))
 
   return {

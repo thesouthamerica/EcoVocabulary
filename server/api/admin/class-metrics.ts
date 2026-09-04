@@ -7,25 +7,9 @@ export default defineEventHandler(async (event) => {
   }
 
   const query = getQuery(event)
-  const schoolYear = query.schoolYear ? parseInt(query.schoolYear) : null
-  const calendarYear = query.calendarYear ? parseInt(query.calendarYear) : null
+  const studentSlugsQuery = query.studentSlugs as string
 
-  if (!schoolYear || !calendarYear) {
-    throw createError({ statusCode: 400, statusMessage: 'Missing schoolYear or calendarYear' })
-  }
-
-  const supabase = await serverSupabaseClient(event)
-  const adminId = user.id
-
-  // 1. Fetch Students in the class
-  const { data: students } = await supabase
-    .from('students_whitelist')
-    .select('slug')
-    .eq('admin_id', adminId)
-    .eq('school_year', schoolYear)
-    .eq('calendar_year', calendarYear)
-
-  if (!students || students.length === 0) {
+  if (!studentSlugsQuery) {
     return {
       overview: { activeStudents: 0, totalAnswers: 0, avgAccuracy: 0 },
       hardestQuestions: [],
@@ -35,12 +19,23 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  const studentSlugs = students.map(s => s.slug)
+  const studentSlugs = studentSlugsQuery.split(',').filter(Boolean)
+  const supabase = await serverSupabaseClient(event)
+
+  if (studentSlugs.length === 0) {
+    return {
+      overview: { activeStudents: 0, totalAnswers: 0, avgAccuracy: 0 },
+      hardestQuestions: [],
+      easiestQuestions: [],
+      categoryPerformance: [],
+      guessVsDifficulty: []
+    }
+  }
 
   // 2. Fetch all answers for these students
   const { data: answers, error: answersError } = await supabase
     .from('user_answers')
-    .select('*, questions(title, promptPt, category)')
+    .select('*, questions(promptPt, type)')
     .in('user_id', studentSlugs)
 
   if (answersError) {
@@ -50,7 +45,7 @@ export default defineEventHandler(async (event) => {
 
   if (!answers || answers.length === 0) {
     return {
-      overview: { activeStudents: students.length, totalAnswers: 0, avgAccuracy: 0 },
+      overview: { activeStudents: studentSlugs.length, totalAnswers: 0, avgAccuracy: 0 },
       hardestQuestions: [],
       easiestQuestions: [],
       categoryPerformance: [],
@@ -60,8 +55,8 @@ export default defineEventHandler(async (event) => {
 
   // 3. Process Data
   let totalCorrect = 0
-  const questionStats = {}
-  const categoryStats = {
+  const questionStats: Record<string, any> = {}
+  const categoryStats: Record<string, { correct: number, total: number }> = {
     'association': { correct: 0, total: 0 },
     'translation': { correct: 0, total: 0 },
     'sentence': { correct: 0, total: 0 },
@@ -71,7 +66,7 @@ export default defineEventHandler(async (event) => {
     if (a.is_correct) totalCorrect++
     
     // Category stats
-    const cat = a.questions?.category || 'association'
+    const cat = a.questions?.type || 'association'
     if (!categoryStats[cat]) categoryStats[cat] = { correct: 0, total: 0 }
     categoryStats[cat].total++
     if (a.is_correct) categoryStats[cat].correct++
@@ -111,14 +106,14 @@ export default defineEventHandler(async (event) => {
     status: q.accuracy < 50 && q.avgTime < 5 ? 'Chute' : (q.accuracy < 50 ? 'Dificuldade' : 'Bom')
   }))
 
-  const categoryPerformance = Object.keys(categoryStats).map(k => ({
+  const categoryPerformance = Object.entries(categoryStats).map(([k, stats]) => ({
     category: k,
-    accuracy: categoryStats[k].total > 0 ? Math.round((categoryStats[k].correct / categoryStats[k].total) * 100) : 0
+    accuracy: stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0
   }))
 
   return {
     overview: {
-      activeStudents: students.length,
+      activeStudents: studentSlugs.length,
       totalAnswers: answers.length,
       avgAccuracy: Math.round((totalCorrect / answers.length) * 100)
     },

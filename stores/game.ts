@@ -173,7 +173,7 @@ export const useGameStore = defineStore('game', {
         const question = this.currentQuestion
         if (level && question) {
           try {
-            await supabase.from('user_answers').insert({
+            const { error } = await supabase.from('user_answers').insert({
               user_id: this.user.dbId,
               level_id: level.id,
               question_id: question.id,
@@ -181,6 +181,9 @@ export const useGameStore = defineStore('game', {
               attempts: attempts,
               time_taken_seconds: timeTakenSeconds
             })
+            if (error) {
+              console.error("Supabase Insert Error (user_answers):", error)
+            }
           } catch (e) {
             console.error("Error logging answer:", e)
           }
