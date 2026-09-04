@@ -161,7 +161,7 @@ export const useGameStore = defineStore('game', {
       this.user.schoolYear = 0
       this.resetGame()
     },
-    async answerQuestion(isCorrect: boolean, supabase: any) {
+    async answerQuestion(isCorrect: boolean, attempts: number = 1, timeTakenSeconds: number = 0, supabase: any) {
       if (isCorrect) {
         this.levelScore += 1
       }
@@ -175,7 +175,9 @@ export const useGameStore = defineStore('game', {
               user_id: this.user.dbId,
               level_id: level.id,
               question_id: question.id,
-              is_correct: isCorrect
+              is_correct: isCorrect,
+              attempts: attempts,
+              time_taken_seconds: timeTakenSeconds
             })
           } catch (e) {
             console.error("Error logging answer:", e)

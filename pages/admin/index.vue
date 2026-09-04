@@ -11,175 +11,217 @@
       </p>
       <div class="mt-4 text-xs font-mono bg-white inline-block px-3 py-2 rounded border border-red-100 text-red-500 font-bold">
         Seu UID atual: {{ adminId }}
+        Seu UID atual: {{ admin.id }}
       </div>
     </div>
 
     <!-- Controles de Turma e Admin -->
-    <div v-if="adminRole" class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex flex-wrap gap-6 items-center justify-between">
-      <div class="flex-1 min-w-[250px]">
-        <label class="block text-sm font-bold text-gray-700 mb-2">Turma / Ano Escolar Atual</label>
-        <select v-model="selectedSchoolYear" @change="fetchData" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-indigo-900 font-bold bg-indigo-50">
-          <option v-if="adminRole === 'master'" :value="0">🕹️ Níveis Padrão / Visitantes</option>
-          <option v-for="y in 9" :key="y" :value="y">{{ y }}º Ano do Ensino Fundamental</option>
-        </select>
-      </div>
-      <div v-if="adminRole" class="flex-1 min-w-[200px]">
-        <label class="block text-sm font-bold text-gray-700 mb-2">Ano Letivo (Período)</label>
-        <select v-model="selectedCalendarYear" @change="fetchData" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-indigo-900 font-bold bg-indigo-50">
-          <option v-for="y in [2024, 2025, 2026, 2027, 2028, 2029, 2030]" :key="y" :value="y">{{ y }}</option>
-        </select>
-      </div>
-      <div v-if="adminRole" class="text-right bg-gray-50 px-4 py-2 rounded-lg border border-gray-100">
-        <span class="block text-xs text-gray-500 font-bold uppercase mb-1">Logado como:</span>
-        <span class="text-indigo-700 font-bold text-sm">{{ adminName }} ({{ adminRole }})</span>
-      </div>
-    </div>
-
-    <!-- O Resto do Painel só aparece se ele for um admin validado -->
-    <div v-if="adminRole" class="space-y-6">
-      
-      <!-- Gerenciar Alunos da Turma (apenas turmas 1 a 9) -->
-      <div v-if="selectedSchoolYear > 0" class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-      <h2 class="text-xl font-black text-gray-800 mb-4 flex items-center gap-2">
-        <span>👨‍🎓 Alunos da Turma</span>
-        <span class="text-sm font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-md">{{ students.length }} cadastrados</span>
-      </h2>
-      <form @submit.prevent="addStudent" class="flex flex-wrap gap-3 mb-4">
-        <input v-model="newStudentFirst" type="text" placeholder="Nome" required class="flex-1 min-w-[150px] px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" />
-        <input v-model="newStudentLast" type="text" placeholder="Sobrenome" required class="flex-1 min-w-[150px] px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" />
-        <button type="submit" class="btn-primary !py-2 !px-6 !rounded-lg whitespace-nowrap">Adicionar Aluno</button>
-      </form>
-      <div class="flex flex-wrap gap-2 mt-4">
-        <span v-for="student in students" :key="student.id" class="px-3 py-1.5 bg-green-50 text-green-700 rounded-full border border-green-200 text-sm font-bold flex items-center gap-2 shadow-sm">
-          {{ student.first_name }} {{ student.last_name }}
-          <button @click="removeStudent(student.id)" class="text-red-400 hover:text-red-700 hover:bg-red-50 rounded-full w-5 h-5 flex items-center justify-center transition-colors" title="Remover">×</button>
-        </span>
-        <span v-if="students.length === 0" class="text-sm text-gray-500 italic p-2">Nenhum aluno cadastrado para o {{ selectedSchoolYear }}º Ano. Adicione acima para autorizá-los a logar.</span>
-      </div>
-    </div>
-
-    <div class="flex justify-between items-center mt-8">
-      <h2 class="text-2xl font-black text-gray-800">Níveis desta Turma</h2>
-      <div class="flex items-center">
-        <button @click="autoGenerateLevels" class="btn-primary !py-2 !px-4 !rounded-lg flex items-center gap-2 mr-2 bg-green-600 hover:bg-green-700 text-white">
-          <span>⚡ Gerar 10 Níveis</span>
-        </button>
-        <button @click="openLevelModal(null)" class="btn-secondary !py-2 !px-4 !rounded-lg flex items-center gap-2">
-          <span>+ Novo Nível</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Tabela de níveis -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-10"></th>
-              <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">ID</th>
-              <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Título</th>
-              <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Descrição</th>
-              <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Ações do Nível</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <template v-for="level in levels" :key="level.id">
-              <tr class="hover:bg-gray-50 transition-colors cursor-pointer" @click="toggleExpand(level.id)">
-                <td class="px-6 py-4 whitespace-nowrap text-center">
-                  <svg :class="{'rotate-90': expandedLevelId === level.id}" class="w-5 h-5 text-gray-400 inline-block transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                  </svg>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">{{ level.id }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
-                  <div class="flex items-center gap-2">
-                    {{ level.title }}
-                    <span v-if="getQuestions(level.id).length === 5" class="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full border border-green-200">✅ Publicado</span>
-                    <span v-else class="px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs rounded-full border border-yellow-200">⚠️ Rascunho ({{ getQuestions(level.id).length }}/5)</span>
-                  </div>
-                </td>
-                <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate" :title="level.description">{{ level.description }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button @click.stop="openLevelModal(level)" class="text-blue-600 hover:text-blue-900 mr-4">Editar</button>
-                  <button @click.stop="deleteLevel(level.id)" class="text-red-600 hover:text-red-900">Excluir</button>
-                </td>
-              </tr>
-              
-              <!-- Expanded Area for Questions -->
-              <tr v-if="expandedLevelId === level.id" class="bg-indigo-50/40">
-                <td colspan="5" class="px-8 py-6 border-b border-indigo-100">
-                  <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-bold text-indigo-900">Perguntas do Nível ({{ getQuestions(level.id).length }}/5)</h3>
-                    <button v-if="getQuestions(level.id).length < 5" @click="openQuestionModal(null, level.id)" class="btn-secondary !py-1.5 !px-3 !rounded-md !text-sm">
-                      + Adicionar Pergunta
-                    </button>
-                    <span v-else class="text-sm font-bold text-green-600 bg-green-50 px-3 py-1.5 rounded-md border border-green-200">
-                      Limite de 5 atingido
-                    </span>
-                  </div>
-                  
-                  <div v-if="getQuestions(level.id).length > 0" class="bg-white border border-indigo-100 rounded-lg overflow-hidden shadow-sm">
-                    <table class="min-w-full divide-y divide-gray-200">
-                      <thead class="bg-indigo-50/50">
-                        <tr>
-                          <th class="px-4 py-2 text-left text-xs font-bold text-indigo-800 uppercase">Tipo</th>
-                          <th class="px-4 py-2 text-left text-xs font-bold text-indigo-800 uppercase">PT</th>
-                          <th class="px-4 py-2 text-left text-xs font-bold text-indigo-800 uppercase">EN</th>
-                          <th class="px-4 py-2 text-right text-xs font-bold text-indigo-800 uppercase">Ações da Pergunta</th>
-                        </tr>
-                      </thead>
-                      <tbody class="divide-y divide-gray-100">
-                        <tr v-for="q in getQuestions(level.id)" :key="q.id" class="hover:bg-gray-50">
-                          <td class="px-4 py-2 text-sm text-gray-900 capitalize font-medium">{{ q.type }}</td>
-                          <td class="px-4 py-2 text-sm text-gray-700 truncate max-w-[200px]">{{ q.promptPt }}</td>
-                          <td class="px-4 py-2 text-sm text-gray-500 truncate max-w-[200px]">{{ q.promptEn }}</td>
-                          <td class="px-4 py-2 text-right text-sm font-medium">
-                            <button @click="openQuestionModal(q, level.id)" class="text-indigo-600 hover:text-indigo-900 mr-3">Editar</button>
-                            <button @click="deleteQuestion(q.id)" class="text-red-500 hover:text-red-700">Excluir</button>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <div v-else class="text-gray-500 italic text-sm py-4 text-center bg-white border border-indigo-100 rounded-lg">
-                    Nenhuma pergunta cadastrada neste nível.
-                  </div>
-                </td>
-              </tr>
-            </template>
-            
-            <tr v-if="levels.length === 0 && !loading">
-              <td colspan="5" class="px-6 py-8 text-center text-gray-500">Nenhum nível encontrado.</td>
-            </tr>
-            <tr v-if="loading">
-              <td colspan="5" class="px-6 py-8 text-center text-gray-500 flex justify-center items-center w-full">
-                <span class="animate-spin w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full mr-2 inline-block"></span> Carregando...
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    
-    </div> <!-- Fechamento da div do adminRole -->
-
-    <!-- Modal Adicionar/Editar Nível -->
-    <div v-if="showLevelModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl">
-        <h2 class="text-2xl font-bold mb-4 text-gray-800">{{ editingLevel ? 'Editar Nível' : 'Novo Nível' }}</h2>
-        <form @submit.prevent="saveLevel" class="space-y-4">
-          <div>
-            <label class="block text-sm font-bold text-gray-700 mb-1">Título do Nível</label>
-            <input v-model="formLevel.title" type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+    <div v-if="adminRole">
+      <!-- Filtros Superiores (Turma e Ano) -->
+      <div class="glass-panel p-6 mb-8 flex flex-col md:flex-row gap-6 items-end relative overflow-hidden z-10 border-t-4 border-t-eco-yellow bg-white rounded-xl shadow-sm">
+        <!-- Turma -->
+        <div class="w-full md:w-1/2 relative group">
+          <label class="block text-gray-500 font-bold mb-2 text-sm uppercase tracking-wider pl-2">Turma / Ano Escolar Atual</label>
+          <div class="relative">
+            <select v-model="selectedSchoolYear" @change="fetchData" class="w-full px-5 py-4 rounded-2xl border-2 border-gray-100 focus:border-eco-green focus:ring-0 outline-none transition-all font-bold text-gray-700 shadow-sm appearance-none bg-white cursor-pointer group-hover:border-eco-green/50">
+              <option v-for="year in 9" :key="year" :value="year">{{ year }}º Ano do Ensino Fundamental</option>
+            </select>
           </div>
-          <div>
-            <label class="block text-sm font-bold text-gray-700 mb-1">Descrição</label>
-            <textarea v-model="formLevel.description" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none h-24 resize-none"></textarea>
+        </div>
+        
+        <!-- Ano Letivo -->
+        <div class="w-full md:w-1/4 relative group">
+          <label class="block text-gray-500 font-bold mb-2 text-sm uppercase tracking-wider pl-2">Ano Letivo</label>
+          <div class="relative">
+            <select v-model="selectedCalendarYear" @change="fetchData" class="w-full px-5 py-4 rounded-2xl border-2 border-gray-100 focus:border-eco-blue focus:ring-0 outline-none transition-all font-bold text-gray-700 shadow-sm appearance-none bg-white cursor-pointer group-hover:border-eco-blue/50">
+              <option v-for="year in [2024, 2025, 2026, 2027, 2028, 2029, 2030]" :key="year" :value="year">{{ year }}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Perfil Logado -->
+        <div class="w-full md:w-1/4 flex justify-end">
+          <div class="bg-gray-50 px-6 py-4 rounded-2xl border border-gray-200 flex flex-col items-end">
+            <span class="text-xs text-gray-400 font-bold uppercase tracking-widest">Logado como:</span>
+            <span class="text-eco-blue font-bold">{{ adminRole === 'master' ? 'Master Admin' : 'Professor (subadmin)' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Abas de Navegação -->
+      <div class="flex border-b border-gray-200 mb-8">
+        <button 
+          @click="activeTab = 'management'" 
+          :class="['px-6 py-3 font-bold text-lg rounded-t-lg transition-colors border-b-4', activeTab === 'management' ? 'border-eco-green text-eco-green bg-eco-green/5' : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50']"
+        >
+          📝 Gerenciar Turma
+        </button>
+        <button 
+          @click="activeTab = 'dashboard'" 
+          :class="['px-6 py-3 font-bold text-lg rounded-t-lg transition-colors border-b-4', activeTab === 'dashboard' ? 'border-eco-blue text-eco-blue bg-eco-blue/5' : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50']"
+        >
+          📊 Dashboard Analítico
+        </button>
+      </div>
+
+      <!-- Conteúdo da Aba: GERENCIAR TURMA -->
+      <div v-if="activeTab === 'management'">
+        <!-- Seção: Alunos -->
+        <div class="bg-white glass-panel p-6 mb-8 border-t-4 border-t-eco-green rounded-xl shadow-sm">
+          <div class="flex items-center gap-3 mb-6">
+            <h2 class="text-xl font-black text-gray-800 flex items-center gap-2">
+              <span>👨‍🎓 Alunos da Turma</span>
+              <span class="text-sm font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-md">{{ students.length }} cadastrados</span>
+            </h2>
+          </div>
+          <form @submit.prevent="addStudent" class="flex flex-wrap gap-3 mb-4">
+            <input v-model="newStudentFirst" type="text" placeholder="Nome" required class="flex-1 min-w-[150px] px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" />
+            <input v-model="newStudentLast" type="text" placeholder="Sobrenome" required class="flex-1 min-w-[150px] px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" />
+            <button type="submit" class="btn-primary !py-2 !px-6 !rounded-lg whitespace-nowrap">Adicionar Aluno</button>
+          </form>
+          <div class="flex flex-wrap gap-2 mt-4">
+            <span v-for="student in students" :key="student.id" class="px-3 py-1.5 bg-green-50 text-green-700 rounded-full border border-green-200 text-sm font-bold flex items-center gap-2 shadow-sm">
+              {{ student.first_name }} {{ student.last_name }}
+              <button @click="removeStudent(student.id)" class="text-red-400 hover:text-red-700 hover:bg-red-50 rounded-full w-5 h-5 flex items-center justify-center transition-colors" title="Remover">×</button>
+            </span>
+            <span v-if="students.length === 0" class="text-sm text-gray-500 italic p-2">Nenhum aluno cadastrado para o {{ selectedSchoolYear }}º Ano. Adicione acima para autorizá-los a logar.</span>
+          </div>
+        </div>
+
+        <!-- Seção: Níveis -->
+        <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t-4 border-t-eco-blue glass-panel p-6 bg-white rounded-xl shadow-sm">
+          <h2 class="text-2xl font-black text-gray-800 flex items-center gap-2">Níveis desta Turma</h2>
+          <div class="flex gap-2">
+            <button @click="autoGenerateLevels" class="btn-primary text-sm px-4 py-2 flex items-center gap-1 shadow-md bg-eco-green hover:bg-eco-green-light" :disabled="loading">
+              <span v-if="loading">Gerando...</span>
+              <span v-else>⚡ Gerar 10 Níveis</span>
+            </button>
+            <button @click="openLevelModal()" class="btn-primary text-sm px-4 py-2 shadow-md">+ Novo Nível</button>
+          </div>
+        </div>
+
+        <!-- Lista de Níveis -->
+        <div class="bg-white glass-panel overflow-hidden rounded-xl shadow-sm">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-gray-50 text-gray-500 text-xs uppercase tracking-widest border-b border-gray-100">
+                  <th class="p-4 font-bold">ID</th>
+                  <th class="p-4 font-bold">Título</th>
+                  <th class="p-4 font-bold">Descrição</th>
+                  <th class="p-4 font-bold text-right">Ações do Nível</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template v-for="level in levels" :key="level.id">
+                  <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group">
+                    <td class="p-4 font-bold text-gray-400">
+                      <button @click="toggleExpand(level.id)" class="mr-2 text-gray-400 hover:text-eco-blue transition-colors">
+                        {{ expandedLevelId === level.id ? '🔽' : '▶️' }}
+                      </button>
+                      {{ level.id }}
+                    </td>
+                    <td class="p-4 font-bold text-gray-800">
+                      {{ level.title }}
+                      <span v-if="getQuestions(level.id).length === 5" class="ml-2 text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full border border-green-200">✅ Publicado</span>
+                      <span v-else class="ml-2 text-[10px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full border border-yellow-200">Rascunho ({{ getQuestions(level.id).length }}/5)</span>
+                    </td>
+                    <td class="p-4 text-gray-500 text-sm">{{ level.description }}</td>
+                    <td class="p-4 text-right">
+                      <button @click="openLevelModal(level)" class="text-eco-blue hover:text-eco-blue-light font-bold text-sm px-3 py-1 rounded hover:bg-eco-blue/10 transition-colors mr-2">Editar</button>
+                      <button @click="deleteLevel(level.id)" class="text-red-500 hover:text-red-400 font-bold text-sm px-3 py-1 rounded hover:bg-red-50 transition-colors">Excluir</button>
+                    </td>
+                  </tr>
+                  
+                  <!-- Expanded Questions Row -->
+                  <tr v-if="expandedLevelId === level.id" class="bg-gray-50/50 shadow-inner">
+                    <td colspan="4" class="p-0 border-b border-gray-200">
+                      <div class="p-6 bg-gradient-to-r from-gray-50 to-white">
+                        <div class="flex justify-between items-center mb-6">
+                          <h3 class="font-black text-gray-700 flex items-center gap-2 text-lg">
+                            <span class="text-2xl"></span> Gerenciar Perguntas do Nível
+                          </h3>
+                          <button @click="openQuestionModal(null, level.id)" class="btn-primary text-sm px-4 py-2 bg-indigo-600 hover:bg-indigo-700 shadow-md">+ Adicionar Pergunta</button>
+                        </div>
+                        
+                        <div v-if="getQuestions(level.id).length > 0" class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                          <div v-for="(q, index) in getQuestions(level.id)" :key="q.id" class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm relative group hover:border-indigo-300 transition-colors flex flex-col md:flex-row gap-4">
+                            
+                            <!-- Imagem/Emoji -->
+                            <div class="w-full md:w-32 h-32 bg-gray-100 rounded-lg flex items-center justify-center shrink-0 border border-gray-200 overflow-hidden">
+                              <img v-if="q.imageUrl && q.imageUrl.startsWith('http')" :src="q.imageUrl" class="w-full h-full object-cover" />
+                              <span v-else-if="q.imageUrl" class="text-6xl">{{ q.imageUrl }}</span>
+                              <span v-else-if="q.type === 'association'" class="text-4xl text-gray-400">🖼️</span>
+                              <span v-else class="text-4xl text-gray-400">📝</span>
+                            </div>
+
+                            <div class="flex-1 min-w-0">
+                              <div class="flex justify-between items-start mb-2">
+                                <div>
+                                  <span class="text-xs font-bold text-indigo-500 uppercase tracking-widest block mb-1">Pergunta {{ index + 1 }}</span>
+                                  <p class="font-black text-gray-800 text-base" :title="'Tradução/Dica: ' + q.promptEn">{{ q.promptPt }}</p>
+                                  <p class="text-gray-500 text-sm italic">Dica/Tradução: {{ q.promptEn }}</p>
+                                </div>
+                                <div class="flex gap-2 shrink-0 ml-2">
+                                  <button @click="openQuestionModal(q, level.id)" class="p-2 bg-indigo-50 rounded-lg text-indigo-600 hover:bg-indigo-100 transition-colors" title="Editar">✏️</button>
+                                  <button @click="deleteQuestion(q.id)" class="p-2 bg-red-50 rounded-lg text-red-500 hover:bg-red-100 transition-colors" title="Excluir">🗑️</button>
+                                </div>
+                              </div>
+                              
+                              <!-- Lista de Opções -->
+                              <div class="mt-4 grid grid-cols-2 gap-2">
+                                <div v-for="opt in q.options" :key="opt.id" class="px-3 py-2 rounded-lg text-sm font-medium border" :class="opt.isCorrect ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-600'">
+                                  <span v-if="opt.isCorrect" class="mr-1">✅</span>
+                                  <span v-else class="mr-1 text-gray-400">❌</span>
+                                  {{ opt.text }}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div v-else class="text-center py-12 text-gray-400 font-medium bg-white rounded-xl border-2 border-dashed border-gray-200">
+                          Nenhuma pergunta cadastrada para este nível ainda.
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </template>
+                
+                <tr v-if="levels.length === 0">
+                  <td colspan="4" class="p-8 text-center text-gray-500">Nenhum nível cadastrado para o {{ selectedSchoolYear }}º Ano.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conteúdo da Aba: DASHBOARD -->
+      <div v-if="activeTab === 'dashboard'">
+        <AdminDashboard :schoolYear="selectedSchoolYear" :calendarYear="selectedCalendarYear" :adminId="adminId" />
+      </div>
+    </div>
+
+    <!-- Modal Nível -->
+    <div v-if="showLevelModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden animate-fade-in-up">
+        <div class="bg-gradient-to-r from-eco-blue to-indigo-600 p-6">
+          <h2 class="text-2xl font-black text-white">{{ editingLevel ? 'Editar Nível' : 'Novo Nível' }}</h2>
+        </div>
+        <form @submit.prevent="saveLevel" class="p-6">
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-bold text-gray-700 mb-1">Título</label>
+              <input v-model="formLevel.title" type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-eco-blue outline-none transition-shadow" placeholder="Ex: Animais Domésticos" />
+            </div>
+            <div>
+              <label class="block text-sm font-bold text-gray-700 mb-1">Descrição</label>
+              <textarea v-model="formLevel.description" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-eco-blue outline-none transition-shadow" placeholder="Ex: Aprenda os nomes dos animais que temos em casa."></textarea>
+            </div>
           </div>
           <div class="flex justify-end gap-3 mt-6">
             <button type="button" @click="showLevelModal = false" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-medium transition-colors">Cancelar</button>
-            <button type="submit" :disabled="savingLevel" class="btn-secondary !py-2 !px-4 !rounded-lg disabled:opacity-70 flex items-center">
+            <button type="submit" :disabled="savingLevel" class="btn-primary !py-2 !px-6 !rounded-lg disabled:opacity-70 flex items-center">
               <span v-if="savingLevel" class="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>
               {{ savingLevel ? 'Salvando...' : 'Salvar' }}
             </button>
@@ -188,44 +230,48 @@
       </div>
     </div>
 
-    <!-- Modal Adicionar/Editar Pergunta -->
-    <div v-if="showQuestionModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto pt-10 pb-10">
-      <div class="bg-white rounded-2xl p-6 w-full max-w-2xl shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
-        <h2 class="text-2xl font-bold mb-4 text-gray-800">{{ editingQuestion ? 'Editar Pergunta' : 'Nova Pergunta' }}</h2>
-        <form @submit.prevent="saveQuestion" class="space-y-4">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-bold text-gray-700 mb-1">Tipo da Pergunta</label>
-              <select v-model="formQuestion.type" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
-                <option value="association">Associação (Association)</option>
-                <option value="translation">Tradução (Translation)</option>
-                <option value="sentence">Frase (Sentence)</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-sm font-bold text-gray-700 mb-1">URL Imagem/Emoji (Opcional)</label>
-              <input v-model="formQuestion.imageUrl" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Ex: 🍎 ou https://..." />
-            </div>
-            <div>
-              <label class="block text-sm font-bold text-gray-700 mb-1">Pergunta (PT)</label>
-              <input v-model="formQuestion.promptPt" type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Ex: Maçã" />
-            </div>
-            <div>
-              <label class="block text-sm font-bold text-gray-700 mb-1">Resposta (EN)</label>
-              <input v-model="formQuestion.promptEn" type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Ex: Apple" />
-            </div>
-          </div>
+    <!-- Modal Pergunta -->
+    <div v-if="showQuestionModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full overflow-hidden animate-fade-in-up max-h-[90vh] overflow-y-auto">
+        <div class="bg-gradient-to-r from-eco-blue to-indigo-600 p-6 sticky top-0 z-10">
+          <h2 class="text-2xl font-black text-white">{{ editingQuestion ? 'Editar Pergunta' : 'Nova Pergunta' }}</h2>
+        </div>
+        <form @submit.prevent="saveQuestion" class="p-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">Tipo de Pergunta</label>
+                <select v-model="formQuestion.type" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-eco-blue outline-none transition-shadow bg-white">
+                  <option value="translation">Tradução</option>
+                  <option value="association">Associação de Imagem</option>
+                  <option value="sentences">Sentenças</option>
+                </select>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">Texto Base (Português)</label>
+                <input v-model="formQuestion.promptPt" type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-eco-blue outline-none transition-shadow" placeholder="Ex: Cachorro" />
+              </div>
+              
+              <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">Resposta / Dica (Inglês)</label>
+                <input v-model="formQuestion.promptEn" type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-eco-blue outline-none transition-shadow" placeholder="Ex: Dog" />
+              </div>
 
-          <div class="mt-6 border-t pt-4">
-            <h3 class="text-lg font-bold mb-3 text-gray-800 flex justify-between items-center">
-              Opções de Resposta
-              <button type="button" @click="addOption" class="text-sm bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-3 py-1 rounded-md transition-colors border border-indigo-200">+ Adicionar Opção</button>
-            </h3>
-            
-            <p class="text-xs text-gray-500 mb-3">Selecione a bolinha ao lado da resposta que é a correta.</p>
-            
+              <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">Imagem ou Emoji</label>
+                <input v-model="formQuestion.imageUrl" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-eco-blue outline-none transition-shadow" placeholder="Ex: 🐶 ou https://exemplo.com/img.png" />
+                <p class="text-xs text-gray-500 mt-1">Cole um Emoji diretamente ou o link público de uma imagem.</p>
+              </div>
+            </div>
+
             <div class="space-y-3">
-              <div v-for="(opt, idx) in formQuestion.options" :key="idx" class="flex items-center gap-3 bg-gray-50 p-3 rounded-lg border border-gray-200">
+              <div class="flex justify-between items-center mb-2">
+                <label class="block text-sm font-bold text-gray-700">Opções de Resposta</label>
+                <button type="button" @click="addOption" class="text-xs btn-secondary !py-1 !px-2 bg-white shadow-sm">+ Opção</button>
+              </div>
+              
+              <div v-for="(opt, idx) in formQuestion.options" :key="idx" class="flex items-center gap-3 bg-gray-50 p-2 rounded-lg border border-gray-200">
                 <input type="radio" :name="'correctOption'" :value="idx" v-model="correctOptionIndex" class="w-5 h-5 text-indigo-600 focus:ring-indigo-500 cursor-pointer" title="Marcar como correta" />
                 <input v-model="opt.text" type="text" required class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 outline-none" :placeholder="'Texto da Opção ' + (idx + 1)" />
                 <button type="button" @click="removeOption(idx)" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-1.5 rounded-md transition-colors" title="Remover opção" v-if="formQuestion.options.length > 2">Excluir</button>
@@ -247,23 +293,30 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { useSupabaseClient } from '#imports'
 import { useGameStore } from '~/stores/game'
+import { generateLevelsByYear } from '~/utils/levelGenerator'
+import AdminDashboard from '~/components/admin/AdminDashboard.vue'
 
 definePageMeta({
   layout: 'admin',
   middleware: 'admin'
 })
 
+const router = useRouter()
 const supabase = useSupabaseClient()
 const gameStore = useGameStore()
+
+const activeTab = ref('management')
 
 // STATES GLOBAIS DA PÁGINA
 const userAuth = ref(null)
 const adminId = ref(null)
 const adminRole = ref(null)
 const adminName = ref('')
+
 const selectedSchoolYear = ref(1)
 const selectedCalendarYear = ref(new Date().getFullYear())
 

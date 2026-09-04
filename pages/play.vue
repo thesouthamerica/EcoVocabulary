@@ -85,8 +85,8 @@ watch(() => gameStore.isFinished, (finished) => {
   }
 })
 
-const handleAnswer = (isCorrect) => {
-  gameStore.answerQuestion(isCorrect, supabase)
+const handleAnswer = (answerData) => {
+  gameStore.answerQuestion(answerData.isCorrect, answerData.attempts, answerData.timeTakenSeconds, supabase)
 }
 
 const handleProceed = () => {

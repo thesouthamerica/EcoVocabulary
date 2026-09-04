@@ -24,7 +24,7 @@ Aprenda inglês brincando e descubra como se tornar um super-herói do nosso pla
           </div>
 
           <img 
-            src="https://hkddkejyzdvepdlhadlf.supabase.co/storage/v1/object/public/imagens%20exercicios/images/logo%20aves.png" 
+            src="https://hkddkejyzdvepdlhadlf.supabase.co/storage/v1/object/public/imagens%20exercicios/images/logo%20aves_.png" 
             alt="Logo Aves" 
             class="h-48 object-contain drop-shadow-lg"
           />
