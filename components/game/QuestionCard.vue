@@ -7,7 +7,7 @@
       </TranslationHover>
       <div v-if="question.imageUrl" class="mt-6 flex justify-center w-full">
         <TranslationHover 
-          :translation="question.imageLabelEn"
+          :translation="question.promptEn"
           :class="question.imageUrl && question.imageUrl.startsWith('http') ? 'w-full' : ''"
         >
           <div :class="[

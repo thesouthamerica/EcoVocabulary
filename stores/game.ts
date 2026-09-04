@@ -4,6 +4,8 @@ import { defineStore } from 'pinia'
 export const useGameStore = defineStore('game', {
   state: () => ({
     user: {
+      dbId: '',
+      displayName: '',
       isLoggedIn: false,
       calendarYear: 0,
       schoolYear: 0

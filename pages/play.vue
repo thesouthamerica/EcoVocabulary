@@ -64,6 +64,7 @@
 <script setup>
 import { computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useSupabaseClient } from '#imports'
 import { useGameStore } from '~/stores/game'
 import QuestionCard from '~/components/game/QuestionCard.vue'
 
