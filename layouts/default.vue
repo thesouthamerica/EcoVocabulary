@@ -37,9 +37,15 @@
       </div>
 
       <!-- Lado Direito: Nome do Usuário -->
-      <div class="hidden sm:flex items-center text-gray-700 font-bold min-w-[120px] justify-end" v-if="gameStore.user.isLoggedIn">
-        <span class="bg-eco-green/10 text-eco-green px-4 py-2 rounded-full capitalize border border-eco-green/20 shadow-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[150px]">
+      <div class="hidden sm:flex flex-col items-center min-w-[120px] justify-end" v-if="gameStore.user.isLoggedIn">
+        <span class="bg-eco-green/10 text-eco-green px-4 py-1.5 rounded-full capitalize border border-eco-green/20 shadow-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px] font-bold">
           👋 {{ gameStore.user.displayName }}
+        </span>
+        <span class="text-[10px] sm:text-xs font-bold text-gray-500 mt-1 uppercase tracking-wider text-center" v-if="gameStore.user.schoolYear > 0">
+          {{ gameStore.user.schoolYear }}º Ano - {{ gameStore.user.calendarYear }}
+        </span>
+        <span class="text-[10px] sm:text-xs font-bold text-gray-500 mt-1 uppercase tracking-wider text-center" v-else>
+          Modo Visitante
         </span>
       </div>
       <!-- Espaço vazio caso não esteja logado, para equilibrar o flexbox -->

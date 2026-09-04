@@ -23,6 +23,12 @@
           <option v-for="y in 9" :key="y" :value="y">{{ y }}º Ano do Ensino Fundamental</option>
         </select>
       </div>
+      <div v-if="adminRole" class="flex-1 min-w-[200px]">
+        <label class="block text-sm font-bold text-gray-700 mb-2">Ano Letivo (Período)</label>
+        <select v-model="selectedCalendarYear" @change="fetchData" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-indigo-900 font-bold bg-indigo-50">
+          <option v-for="y in [2024, 2025, 2026, 2027, 2028, 2029, 2030]" :key="y" :value="y">{{ y }}</option>
+        </select>
+      </div>
       <div v-if="adminRole" class="text-right bg-gray-50 px-4 py-2 rounded-lg border border-gray-100">
         <span class="block text-xs text-gray-500 font-bold uppercase mb-1">Logado como:</span>
         <span class="text-indigo-700 font-bold text-sm">{{ adminName }} ({{ adminRole }})</span>
@@ -54,9 +60,14 @@
 
     <div class="flex justify-between items-center mt-8">
       <h2 class="text-2xl font-black text-gray-800">Níveis desta Turma</h2>
-      <button @click="openLevelModal(null)" class="btn-secondary !py-2 !px-4 !rounded-lg flex items-center gap-2">
-        <span>+ Novo Nível</span>
-      </button>
+      <div class="flex items-center">
+        <button @click="autoGenerateLevels" class="btn-primary !py-2 !px-4 !rounded-lg flex items-center gap-2 mr-2 bg-green-600 hover:bg-green-700 text-white">
+          <span>⚡ Gerar 10 Níveis</span>
+        </button>
+        <button @click="openLevelModal(null)" class="btn-secondary !py-2 !px-4 !rounded-lg flex items-center gap-2">
+          <span>+ Novo Nível</span>
+        </button>
+      </div>
     </div>
 
     <!-- Tabela de níveis -->
@@ -254,6 +265,7 @@ const adminId = ref(null)
 const adminRole = ref(null)
 const adminName = ref('')
 const selectedSchoolYear = ref(1)
+const selectedCalendarYear = ref(new Date().getFullYear())
 
 const levels = ref([])
 const allQuestions = ref([])
@@ -328,6 +340,7 @@ const fetchData = async () => {
       .select('*')
       .eq('admin_id', adminId.value)
       .eq('school_year', selectedSchoolYear.value)
+      .eq('calendar_year', selectedCalendarYear.value)
       .order('first_name')
     students.value = stData || []
   } else {
@@ -355,6 +368,7 @@ const addStudent = async () => {
   const { error } = await supabase.from('students_whitelist').insert({
     admin_id: adminId.value,
     school_year: selectedSchoolYear.value,
+    calendar_year: selectedCalendarYear.value,
     first_name: fFirst,
     last_name: fLast,
     slug: slug
@@ -538,5 +552,94 @@ const deleteQuestion = async (id) => {
     return
   }
   await fetchData()
+}
+
+const autoGenerateLevels = async () => {
+  if (selectedSchoolYear.value === 0) {
+    alert("Por favor, selecione um Ano Escolar válido (1º ao 9º) antes de gerar níveis.");
+    return;
+  }
+  
+  if (!confirm(`Gerar 10 níveis adequados à BNCC para o ${selectedSchoolYear.value}º Ano?`)) return;
+  
+  loading.value = true;
+  
+  // Utiliza a função global (auto-importada do diretório utils do Nuxt)
+  const levelsData = generateLevelsByYear(selectedSchoolYear.value);
+
+  if (!levelsData || levelsData.length === 0) {
+    alert(`Sem dados pré-configurados para o ${selectedSchoolYear.value}º Ano.`);
+    loading.value = false;
+    return;
+  }
+
+  const shuffle = (array) => {
+    let currentIndex = array.length, randomIndex;
+    while (currentIndex !== 0) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+      [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+    }
+    return array;
+  };
+
+  try {
+    const { data: maxLevelData } = await supabase.from('levels').select('id').order('id', { ascending: false }).limit(1);
+    let absoluteMaxLevelId = maxLevelData && maxLevelData.length > 0 ? maxLevelData[0].id : 0;
+
+    const { data: maxQuestionData } = await supabase.from('questions').select('id').order('id', { ascending: false }).limit(1);
+    let absoluteMaxQuestionId = maxQuestionData && maxQuestionData.length > 0 ? maxQuestionData[0].id : 0;
+
+    for (const levelData of levelsData) {
+      absoluteMaxLevelId++;
+      
+      const newLevel = {
+        id: absoluteMaxLevelId,
+        title: levelData.title,
+        description: levelData.description,
+        admin_id: adminId.value,
+        school_year: selectedSchoolYear.value
+      };
+
+      await supabase.from('levels').insert([newLevel]);
+      
+      for (const item of levelData.items) {
+        absoluteMaxQuestionId++;
+        
+        let allWords = [...levelData.items.map(i => i.en), ...levelData.distractors];
+        allWords = allWords.filter(w => w !== item.en);
+        shuffle(allWords);
+        
+        const incorrectWords = allWords.slice(0, 3);
+        const optionsArray = [
+          { id: 1, text: item.en, isCorrect: true },
+          { id: 2, text: incorrectWords[0], isCorrect: false },
+          { id: 3, text: incorrectWords[1], isCorrect: false },
+          { id: 4, text: incorrectWords[2], isCorrect: false }
+        ];
+        
+        shuffle(optionsArray);
+        optionsArray.forEach((opt, idx) => { opt.id = idx + 1; });
+        
+        const newQuestion = {
+          id: absoluteMaxQuestionId,
+          level_id: absoluteMaxLevelId,
+          type: item.type,
+          promptPt: item.pt,
+          promptEn: item.en,
+          imageUrl: null,
+          options: optionsArray
+        };
+        
+        await supabase.from('questions').insert([newQuestion]);
+      }
+    }
+    alert(`10 níveis e 50 perguntas gerados com sucesso para o ${selectedSchoolYear.value}º Ano!`);
+    await fetchData();
+  } catch (e) {
+    alert("Erro ao gerar: " + e.message);
+  } finally {
+    loading.value = false;
+  }
 }
 </script>

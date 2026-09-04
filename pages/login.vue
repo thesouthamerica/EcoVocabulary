@@ -1,8 +1,8 @@
 <template>
   <div class="flex-1 flex items-center justify-center min-h-[80vh] p-4">
     <div class="glass-panel w-full max-w-md p-8 text-center animate-fade-in-up shadow-2xl">
-      <div class="w-24 h-24 mx-auto bg-eco-green text-white rounded-full flex items-center justify-center text-5xl mb-6 shadow-xl shadow-eco-green/30 transform hover:rotate-12 transition-transform duration-300">
-        🌍
+      <div class="w-24 h-24 mx-auto flex items-center justify-center mb-6 relative">
+        <img src="https://hkddkejyzdvepdlhadlf.supabase.co/storage/v1/object/public/imagens%20exercicios/login.png" alt="Eco-Vocabulary" class="w-full h-full object-contain transition-transform duration-500 origin-[50%_75%] hover:scale-[2.2]">
       </div>
       
       <h1 class="text-3xl font-black text-gray-800 mb-2">Eco-Vocabulary</h1>
@@ -77,6 +77,7 @@ const firstName = ref('')
 const lastName = ref('')
 const selectedTeacher = ref('')
 const schoolYear = ref('')
+const calendarYear = ref(new Date().getFullYear())
 const teachers = ref([])
 const errorMsg = ref('')
 const loading = ref(false)
@@ -96,7 +97,8 @@ const handleLogin = async () => {
       Number(schoolYear.value), 
       selectedTeacher.value, 
       false, 
-      supabase
+      supabase,
+      Number(calendarYear.value)
     )
 
     if (result.success) {
@@ -118,7 +120,8 @@ const handleVisitorLogin = async () => {
     0, 
     null, 
     true, 
-    supabase
+    supabase,
+    new Date().getFullYear()
   )
 
   if (result.success) {

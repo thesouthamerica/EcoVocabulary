@@ -15,7 +15,7 @@ Aprenda inglês brincando e descubra como se tornar um super-herói do nosso pla
           
           <!-- Balão de Fala (Canto Superior Esquerdo) -->
           <div class="absolute right-full mr-2 top-0 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 delay-210 bg-white text-red-600 font-bold rounded-xl px-5 py-3 drop-shadow-2xl border border-gray-200 whitespace-nowrap after:content-[''] after:absolute after:top-4 after:left-full after:border-8 after:border-transparent after:border-l-white">
-            Are you ready to learn?
+            Ready to learn?
           </div>
           
           <!-- Balão de Fala (Lateral Direita) -->

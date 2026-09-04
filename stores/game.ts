@@ -4,9 +4,9 @@ import { defineStore } from 'pinia'
 export const useGameStore = defineStore('game', {
   state: () => ({
     user: {
-      dbId: '',
-      displayName: '',
       isLoggedIn: false,
+      calendarYear: 0,
+      schoolYear: 0
     },
     levels: [] as any[],
     currentLevelIndex: 0,
@@ -71,7 +71,7 @@ export const useGameStore = defineStore('game', {
         return []
       }
     },
-    async login(firstName: string, lastName: string, schoolYear: number, teacherId: string | null, isVisitor: boolean, supabase: any) {
+    async login(firstName: string, lastName: string, schoolYear: number, teacherId: string | null, isVisitor: boolean, supabase: any, calendarYear: number = new Date().getFullYear()) {
       // Limpa os dados do usuário anterior antes de carregar o novo
       this.resetGame()
       
@@ -93,6 +93,8 @@ export const useGameStore = defineStore('game', {
       this.user.dbId = slug
       this.user.displayName = displayName
       this.user.isLoggedIn = true
+      this.user.calendarYear = calendarYear
+      this.user.schoolYear = schoolYear
 
       try {
         if (!isVisitor) {
@@ -101,6 +103,7 @@ export const useGameStore = defineStore('game', {
             .select('*')
             .eq('admin_id', teacherId)
             .eq('school_year', schoolYear)
+            .eq('calendar_year', calendarYear)
             .eq('slug', slug)
             .single()
             
@@ -113,6 +116,7 @@ export const useGameStore = defineStore('game', {
           .from('user_progress')
           .select('score, current_level_index')
           .eq('name', slug)
+          .eq('calendar_year', calendarYear)
           .single()
           
         if (error && error.code !== 'PGRST116') {
@@ -132,7 +136,8 @@ export const useGameStore = defineStore('game', {
             score: 0,
             current_level_index: 0,
             admin_id: isVisitor ? null : teacherId,
-            school_year: isVisitor ? 0 : schoolYear
+            school_year: isVisitor ? 0 : schoolYear,
+            calendar_year: isVisitor ? 0 : calendarYear
           })
           if (insertError) console.error("Supabase insert error:", insertError)
           this._shuffleCurrentLevel()
@@ -152,6 +157,8 @@ export const useGameStore = defineStore('game', {
       this.user.dbId = ''
       this.user.displayName = ''
       this.user.isLoggedIn = false
+      this.user.calendarYear = 0
+      this.user.schoolYear = 0
       this.resetGame()
     },
     async answerQuestion(isCorrect: boolean, supabase: any) {
@@ -237,9 +244,10 @@ export const useGameStore = defineStore('game', {
         try {
           const { error } = await supabase.from('user_progress').upsert({
             name: this.user.dbId,
+            calendar_year: this.user.calendarYear,
             score: this.score,
             current_level_index: this.maxUnlockedLevel
-          }, { onConflict: 'name' })
+          }, { onConflict: 'name, calendar_year' })
           if (error) console.error("Supabase upsert error:", error)
         } catch (err) {
           console.error("Could not save to Supabase:", err)
