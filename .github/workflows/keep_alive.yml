@@ -12,8 +12,8 @@ jobs:
     steps:
       - name: Ping Supabase to prevent pause
         env:
-          SUPABASE_URL: "${{ secrets.SUPABASE_URL }}"
-          SUPABASE_KEY: "${{ secrets.SUPABASE_KEY }}"
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: |
           if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_KEY" ]; then
             echo "Erro: As secrets SUPABASE_URL e SUPABASE_KEY não estão configuradas."
