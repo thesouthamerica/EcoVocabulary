@@ -25,7 +25,7 @@ jobs:
           # Fazemos um GET na raiz da API REST para manter o projeto ativo sem depender de tabelas específicas
           RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X GET "${SUPABASE_URL}/rest/v1/" \
             -H "apikey: ${SUPABASE_KEY}" \
-            -H "Authorization: ${SUPABASE_KEY}")
+            -H "Authorization: Bearer ${SUPABASE_KEY}")
           
           if [ "$RESPONSE" -eq 200 ]; then
             echo "Sucesso! Supabase pingado (Status: $RESPONSE)."
