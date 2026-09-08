@@ -374,7 +374,10 @@ const fetchData = async () => {
   let levelsQuery = supabase.from('levels').select('*').order('id')
   
   if (selectedSchoolYear.value > 0) {
-    levelsQuery = levelsQuery.eq('school_year', selectedSchoolYear.value).eq('admin_id', adminId.value)
+    levelsQuery = levelsQuery
+      .eq('school_year', selectedSchoolYear.value)
+      .eq('admin_id', adminId.value)
+      .eq('calendar_year', selectedCalendarYear.value)
   } else {
     levelsQuery = levelsQuery.eq('school_year', 0)
   }
@@ -401,7 +404,7 @@ const fetchData = async () => {
   }
   
   // Atualiza Store Global para Preview
-  await gameStore.fetchLevels(supabase, adminId.value, selectedSchoolYear.value, true)
+  await gameStore.fetchLevels(supabase, adminId.value, selectedSchoolYear.value, selectedCalendarYear.value, true)
   
   loading.value = false
 }
@@ -416,7 +419,8 @@ const addStudent = async () => {
   };
   const fFirst = formatName(newStudentFirst.value)
   const fLast = formatName(newStudentLast.value)
-  const slug = `${fFirst}-${fLast}`.toLowerCase().replace(/\s+/g, '-')
+  const rawSlug = `${fFirst}-${fLast}`.toLowerCase().replace(/\s+/g, '-')
+  const slugWithYear = `${rawSlug}-${selectedCalendarYear.value}`
   
   const { error } = await supabase.from('students_whitelist').insert({
     admin_id: adminId.value,
@@ -424,7 +428,7 @@ const addStudent = async () => {
     calendar_year: selectedCalendarYear.value,
     first_name: fFirst,
     last_name: fLast,
-    slug: slug
+    slug: slugWithYear
   })
   
   if (error) {
@@ -480,7 +484,8 @@ const saveLevel = async () => {
        ...formLevel.value, 
        id: absoluteMaxId + 1,
        admin_id: adminId.value,
-       school_year: selectedSchoolYear.value
+       school_year: selectedSchoolYear.value,
+       calendar_year: selectedCalendarYear.value
     }
     
     const { data, error } = await supabase.from('levels').insert([newLevel]).select()
@@ -651,7 +656,8 @@ const autoGenerateLevels = async () => {
         title: levelData.title,
         description: levelData.description,
         admin_id: adminId.value,
-        school_year: selectedSchoolYear.value
+        school_year: selectedSchoolYear.value,
+        calendar_year: selectedCalendarYear.value
       };
 
       await supabase.from('levels').insert([newLevel]);

@@ -125,7 +125,8 @@ watch(() => [props.schoolYear, props.calendarYear], () => {
 
 const { data: metrics, pending, refresh } = await useFetch('/api/admin/student-metrics', {
   query: computed(() => ({
-    studentSlug: selectedStudentSlug.value
+    studentSlug: selectedStudentSlug.value,
+    adminId: props.adminId
   })),
   immediate: false,
   watch: [selectedStudentSlug]

@@ -32,7 +32,7 @@ export const useGameStore = defineStore('game', {
     isFinished: (state) => state.currentLevelIndex >= state.levels.length
   },
   actions: {
-    async fetchLevels(supabase: any, adminId: string | null = null, schoolYear: number = 0, force = false) {
+    async fetchLevels(supabase: any, adminId: string | null = null, schoolYear: number = 0, calendarYear: number = 0, force = false) {
       if (this.levels.length > 0 && !force) return; // Já carregou
 
       try {
@@ -40,7 +40,7 @@ export const useGameStore = defineStore('game', {
         let questionsQuery = supabase.from('questions').select('*').order('id')
         
         if (adminId) {
-          levelsQuery = levelsQuery.eq('admin_id', adminId).eq('school_year', schoolYear)
+          levelsQuery = levelsQuery.eq('admin_id', adminId).eq('school_year', schoolYear).eq('calendar_year', calendarYear)
         } else {
           levelsQuery = levelsQuery.eq('school_year', 0) // Níveis do master admin ou visitantes
         }
@@ -86,40 +86,80 @@ export const useGameStore = defineStore('game', {
       const formattedFirstName = isVisitor ? "Visitante" : formatName(firstName);
       const formattedLastName = isVisitor ? "" : formatName(lastName);
       
-      const slug = isVisitor 
+      const baseSlug = isVisitor 
         ? `visitante-${Math.floor(Math.random()*10000)}` 
         : `${formattedFirstName}-${formattedLastName}`.toLowerCase().replace(/\s+/g, '-')
       
-      const displayName = isVisitor ? "Visitante" : `${formattedFirstName} ${formattedLastName}`
-      
-      this.user.dbId = slug
-      this.user.displayName = displayName
-      this.user.isLoggedIn = true
-      this.user.calendarYear = calendarYear
-      this.user.schoolYear = schoolYear
+      const slugWithYear = isVisitor ? baseSlug : `${baseSlug}-${calendarYear}`
+      let finalSlugForDb = baseSlug
 
       try {
         if (!isVisitor) {
-          const { data: whitelistData, error: whitelistError } = await supabase
+          let { data: whitelistData, error: whitelistError } = await supabase
             .from('students_whitelist')
             .select('*')
             .eq('admin_id', teacherId)
             .eq('school_year', schoolYear)
             .eq('calendar_year', calendarYear)
-            .eq('slug', slug)
+            .eq('slug', slugWithYear)
             .single()
             
           if (whitelistError || !whitelistData) {
-            throw new Error("Aluno não encontrado na lista desta turma.")
+            // Fallback para alunos antigos que foram cadastrados sem o ano letivo no slug
+            const { data: oldData, error: oldError } = await supabase
+              .from('students_whitelist')
+              .select('*')
+              .eq('admin_id', teacherId)
+              .eq('school_year', schoolYear)
+              .eq('calendar_year', calendarYear)
+              .eq('slug', baseSlug)
+              .single()
+              
+            if (oldError || !oldData) {
+              throw new Error("Aluno não encontrado na lista desta turma.")
+            }
+            whitelistData = oldData
           }
+          
+          finalSlugForDb = whitelistData.slug
         }
+
+        // Para evitar que alunos com o mesmo nome em escolas/professores diferentes compartilhem progresso,
+        // anexamos o ID do professor no dbId, que será salvo na coluna "name" do banco.
+        const uniqueDbId = isVisitor ? baseSlug : `${finalSlugForDb}-${teacherId}`
         
-        const { data, error } = await supabase
+        const displayName = isVisitor ? "Visitante" : `${formattedFirstName} ${formattedLastName}`
+        
+        this.user.dbId = uniqueDbId
+        this.user.displayName = displayName
+        this.user.isLoggedIn = true
+        this.user.calendarYear = calendarYear
+        this.user.schoolYear = schoolYear
+        
+        let { data, error } = await supabase
           .from('user_progress')
-          .select('score, current_level_index')
-          .eq('name', slug)
+          .select('id, score, current_level_index')
+          .eq('name', uniqueDbId)
           .eq('calendar_year', calendarYear)
           .single()
+          
+        // Fallback para migrar progresso antigo (sem o teacherId no slug) para o novo formato
+        if (error && error.code === 'PGRST116' && !isVisitor) {
+          const { data: oldData } = await supabase
+            .from('user_progress')
+            .select('id, score, current_level_index')
+            .eq('name', baseSlug)
+            .eq('calendar_year', calendarYear)
+            .eq('admin_id', teacherId)
+            .single()
+            
+          if (oldData) {
+            // Migra o progresso antigo para usar o uniqueDbId
+            await supabase.from('user_progress').update({ name: uniqueDbId }).eq('id', oldData.id)
+            data = oldData
+            error = null
+          }
+        }
           
         if (error && error.code !== 'PGRST116') {
           console.error("Supabase error on select:", error)
@@ -134,7 +174,7 @@ export const useGameStore = defineStore('game', {
         } else {
           // Create new user profile
           const { error: insertError } = await supabase.from('user_progress').insert({
-            name: slug,
+            name: uniqueDbId,
             score: 0,
             current_level_index: 0,
             admin_id: isVisitor ? null : teacherId,
@@ -146,7 +186,7 @@ export const useGameStore = defineStore('game', {
         }
         
         // Força buscar os níveis baseados no perfil que acabou de logar
-        await this.fetchLevels(supabase, isVisitor ? null : teacherId, isVisitor ? 0 : schoolYear, true)
+        await this.fetchLevels(supabase, isVisitor ? null : teacherId, isVisitor ? 0 : schoolYear, isVisitor ? 0 : calendarYear, true)
         
         return { success: true }
       } catch (err: any) {

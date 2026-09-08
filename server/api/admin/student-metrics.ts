@@ -8,6 +8,7 @@ export default defineEventHandler(async (event) => {
 
   const query = getQuery(event)
   const studentSlug = query.studentSlug
+  const adminId = query.adminId
 
   if (!studentSlug) {
     throw createError({ statusCode: 400, statusMessage: 'Missing studentSlug' })
@@ -15,12 +16,24 @@ export default defineEventHandler(async (event) => {
 
   const supabase = await serverSupabaseClient(event)
 
+  const uniqueDbId = adminId ? `${studentSlug}-${adminId}` : studentSlug
+
   // 1. Fetch user progress (overall score)
-  const { data: progress } = await supabase
+  let { data: progress } = await supabase
     .from('user_progress')
     .select('score, current_level_index')
-    .eq('name', studentSlug)
+    .eq('name', uniqueDbId)
     .single()
+    
+  if (!progress) {
+    const { data: oldProgress } = await supabase
+      .from('user_progress')
+      .select('score, current_level_index')
+      .eq('name', studentSlug)
+      .eq('admin_id', adminId)
+      .single()
+    progress = oldProgress
+  }
 
   // 2. Fetch all answers for this student
   const thirtyDaysAgo = new Date()
@@ -29,7 +42,7 @@ export default defineEventHandler(async (event) => {
   const { data: answers, error: answersError } = await supabase
     .from('user_answers')
     .select('*, questions(promptPt, type)')
-    .eq('user_id', studentSlug)
+    .in('user_id', [uniqueDbId, studentSlug])
     .gte('created_at', thirtyDaysAgo.toISOString())
     .order('created_at', { ascending: true })
 

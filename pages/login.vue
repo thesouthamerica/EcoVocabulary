@@ -40,6 +40,18 @@
               <option v-for="year in 9" :key="year" :value="year">{{ year }}º Ano</option>
             </select>
           </div>
+
+          <div class="text-left">
+            <label class="block text-gray-500 font-bold mb-1 text-sm pl-2">Ano Letivo</label>
+            <input 
+              v-model="calendarYear" 
+              type="number" 
+              min="2020"
+              max="2100"
+              class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-eco-green focus:ring-0 outline-none transition-all text-center font-bold text-gray-700 text-lg shadow-inner"
+              required
+            />
+          </div>
         </div>
 
         <div v-if="errorMsg" class="p-3 bg-red-50 text-red-600 text-sm font-bold rounded-lg border border-red-200">
