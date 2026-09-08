@@ -12,8 +12,8 @@ jobs:
     steps:
       - name: Ping Supabase to prevent pause
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_URL: "${{ secrets.SUPABASE_URL }}"
+          SUPABASE_KEY: "${{ secrets.SUPABASE_KEY }}"
         run: |
           if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_KEY" ]; then
             echo "Erro: As secrets SUPABASE_URL e SUPABASE_KEY não estão configuradas."
@@ -22,8 +22,8 @@ jobs:
           
           echo "Fazendo requisição para $SUPABASE_URL..."
           
-          # Fazemos um simples SELECT na tabela 'levels' para registrar atividade
-          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X GET "${SUPABASE_URL}/rest/v1/levels?select=id&limit=1" \
+          # Fazemos um GET na raiz da API REST para manter o projeto ativo sem depender de tabelas específicas
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X GET "${SUPABASE_URL}/rest/v1/" \
             -H "apikey: ${SUPABASE_KEY}" \
             -H "Authorization: Bearer ${SUPABASE_KEY}")
           
