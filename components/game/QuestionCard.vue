@@ -84,7 +84,20 @@ watch(() => props.question.id, () => {
   startTimer()
 })
 
+const playAudio = (text) => {
+  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    window.speechSynthesis.cancel()
+    const utterance = new SpeechSynthesisUtterance(text)
+    utterance.lang = 'en-US' // Lê em inglês
+    utterance.rate = 0.9 // Um pouquinho mais devagar para clareza
+    window.speechSynthesis.speak(utterance)
+  }
+}
+
 const selectOption = (option) => {
+  // Toca o áudio da palavra clicada
+  playAudio(option.text)
+
   if (isProcessing.value || optionState.value[option.id] === 'incorrect') return
   
   attemptsCount.value++
