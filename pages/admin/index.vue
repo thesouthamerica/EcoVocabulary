@@ -43,7 +43,7 @@
         <div class="w-full md:w-1/4 flex justify-end">
           <div class="bg-gray-50 px-6 py-4 rounded-2xl border border-gray-200 flex flex-col items-end">
             <span class="text-xs text-gray-400 font-bold uppercase tracking-widest">Logado como:</span>
-            <span class="text-eco-blue font-bold">{{ adminRole === 'master' ? 'Master Admin' : 'Professor (subadmin)' }}</span>
+            <span class="text-eco-blue font-bold">{{ adminRole === 'master' ? 'Master Admin' : (adminName || 'Professor') }}</span>
           </div>
         </div>
       </div>
