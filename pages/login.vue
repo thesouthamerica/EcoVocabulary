@@ -1,6 +1,7 @@
 <template>
-  <div class="flex-1 flex items-center justify-center min-h-[80vh] p-4">
-    <div class="glass-panel w-full max-w-md p-8 text-center animate-fade-in-up shadow-2xl">
+  <div class="flex-1 flex items-center justify-center min-h-[80vh] p-4 relative">
+    
+    <div class="glass-panel w-full max-w-md p-8 text-center animate-fade-in-up shadow-2xl mt-8 md:mt-0">
       <div class="w-24 h-24 mx-auto flex items-center justify-center mb-6 relative">
         <img src="https://hkddkejyzdvepdlhadlf.supabase.co/storage/v1/object/public/imagens%20exercicios/login.png" alt="Eco-Vocabulary" class="w-full h-full object-contain transition-transform duration-500 origin-[50%_75%] hover:scale-[2.2]">
       </div>
@@ -34,7 +35,7 @@
                 class="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 outline-none transition-all font-bold text-gray-700 text-lg shadow-inner bg-white flex justify-between items-center hover:border-eco-green"
               >
                 <span class="flex-1 text-center truncate px-2" :class="!selectedTeacher ? 'text-gray-400' : ''">
-                  {{ selectedTeacher ? teachers.find(t => t.id === selectedTeacher)?.name : 'Selecione seu professor' }}
+                  {{ selectedTeacher ? teachers.find(t => t.id === selectedTeacher)?.name : 'Selecione sua escola' }}
                 </span>
                 <span class="text-gray-400 text-sm transition-transform duration-300" :class="showTeacherDropdown ? 'rotate-180' : ''">▼</span>
               </button>

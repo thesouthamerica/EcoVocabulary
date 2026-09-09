@@ -49,7 +49,12 @@
         </span>
       </div>
       <!-- Espaço vazio caso não esteja logado, para equilibrar o flexbox -->
-      <div v-else class="min-w-[120px] hidden sm:block"></div>
+      <div v-else-if="route.path === '/login'" class="flex min-w-[40px] sm:min-w-[120px] justify-end items-center">
+        <NuxtLink to="/admin" class="p-2 sm:p-3 rounded-full hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600 shadow-sm bg-white border border-gray-100" title="Acesso Admin">
+          <SettingsIcon class="w-5 h-5 sm:w-6 sm:h-6" />
+        </NuxtLink>
+      </div>
+      <div v-else class="min-w-[40px] sm:min-w-[120px] hidden sm:block"></div>
       
     </header>
 
@@ -72,7 +77,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { Home as HomeIcon, ArrowLeft as ArrowLeftIcon, Map as MapIcon } from 'lucide-vue-next'
+import { Home as HomeIcon, ArrowLeft as ArrowLeftIcon, Map as MapIcon, Settings as SettingsIcon } from 'lucide-vue-next'
 import { useGameStore } from '~/stores/game'
 
 const gameStore = useGameStore()
