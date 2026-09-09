@@ -62,6 +62,13 @@
         >
           📊 Dashboard Analítico
         </button>
+        <button 
+          v-if="adminRole === 'master'"
+          @click="activeTab = 'subadmins'" 
+          :class="['px-6 py-3 font-bold text-lg rounded-t-lg transition-colors border-b-4', activeTab === 'subadmins' ? 'border-purple-500 text-purple-600 bg-purple-500/5' : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50']"
+        >
+          👑 Gerenciar Subadmins
+        </button>
       </div>
 
       <!-- Conteúdo da Aba: GERENCIAR TURMA -->
@@ -200,6 +207,72 @@
       <div v-if="activeTab === 'dashboard'">
         <AdminDashboard :schoolYear="selectedSchoolYear" :calendarYear="selectedCalendarYear" :adminId="adminId" />
       </div>
+
+      <!-- Conteúdo da Aba: SUBADMINS (Apenas Master) -->
+      <div v-if="activeTab === 'subadmins' && adminRole === 'master'">
+        <div class="bg-white glass-panel p-6 mb-8 border-t-4 border-t-purple-500 rounded-xl shadow-sm">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-black text-gray-800 flex items-center gap-2">
+              <span>👑 Gerenciar Subadmins (Professores)</span>
+            </h2>
+          </div>
+          
+          <div class="bg-purple-50 p-6 rounded-xl border border-purple-100 mb-8">
+            <h3 class="font-bold text-purple-800 mb-4">Adicionar Novo Subadmin</h3>
+            <form @submit.prevent="createSubadmin" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">Nome Completo</label>
+                <input v-model="newSubadminForm.name" type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 bg-white" placeholder="Ex: Professor João" />
+              </div>
+              <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">E-mail (Login)</label>
+                <input v-model="newSubadminForm.email" type="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 bg-white" placeholder="joao@escola.com" />
+              </div>
+              <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">Senha Provisória</label>
+                <input v-model="newSubadminForm.password" type="password" required minlength="6" class="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 bg-white" placeholder="Mínimo 6 caracteres" />
+              </div>
+              <div class="md:col-span-3 flex justify-end mt-2">
+                <button type="submit" :disabled="creatingSubadmin" class="btn-primary !py-2 !px-8 !rounded-lg bg-purple-600 hover:bg-purple-700 disabled:opacity-70 flex items-center">
+                  <span v-if="creatingSubadmin" class="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>
+                  {{ creatingSubadmin ? 'Criando...' : 'Criar Conta de Subadmin' }}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div>
+            <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+              Subadmins Cadastrados
+              <span class="text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-md">{{ subadminsList.length }} ativos</span>
+            </h3>
+            
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="bg-gray-50 text-gray-500 text-xs uppercase tracking-widest border-b border-gray-100">
+                    <th class="p-4 font-bold">Nome</th>
+                    <th class="p-4 font-bold">E-mail</th>
+                    <th class="p-4 font-bold">Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="sub in subadminsList" :key="sub.id" class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                    <td class="p-4 font-bold text-gray-800">{{ sub.name }}</td>
+                    <td class="p-4 text-gray-600">{{ sub.email }}</td>
+                    <td class="p-4">
+                      <button @click="deleteSubadmin(sub.id)" class="text-red-500 hover:text-red-700 font-bold text-sm px-3 py-1 rounded hover:bg-red-50 transition-colors">Excluir Acesso</button>
+                    </td>
+                  </tr>
+                  <tr v-if="subadminsList.length === 0">
+                    <td colspan="3" class="p-8 text-center text-gray-500">Nenhum subadmin cadastrado.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Modal Nível -->
@@ -295,7 +368,8 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useSupabaseClient } from '#imports'
+import { useSupabaseClient, useRuntimeConfig } from '#imports'
+import { createClient } from '@supabase/supabase-js'
 import { useGameStore } from '~/stores/game'
 import { generateLevelsByYear } from '~/utils/levelGenerator'
 import AdminDashboard from '~/components/admin/AdminDashboard.vue'
@@ -310,6 +384,11 @@ const supabase = useSupabaseClient()
 const gameStore = useGameStore()
 
 const activeTab = ref('management')
+
+// SUBADMINS STATES
+const subadminsList = ref([])
+const creatingSubadmin = ref(false)
+const newSubadminForm = ref({ name: '', email: '', password: '' })
 
 // STATES GLOBAIS DA PÁGINA
 const userAuth = ref(null)
@@ -402,6 +481,12 @@ const fetchData = async () => {
   } else {
     students.value = []
   }
+
+  // 4. Busca Subadmins (se for master)
+  if (adminRole.value === 'master') {
+    const { data: subs } = await supabase.from('admins').select('*').eq('role', 'subadmin').order('name')
+    if (subs) subadminsList.value = subs
+  }
   
   // Atualiza Store Global para Preview
   await gameStore.fetchLevels(supabase, adminId.value, selectedSchoolYear.value, selectedCalendarYear.value, true)
@@ -445,6 +530,68 @@ const removeStudent = async (id) => {
   if (!confirm("Remover este aluno da turma? Ele não conseguirá mais fazer login!")) return
   await supabase.from('students_whitelist').delete().eq('id', id)
   fetchData()
+}
+
+// --- SUBADMINS CRUD ---
+const createSubadmin = async () => {
+  creatingSubadmin.value = true
+  
+  try {
+    const config = useRuntimeConfig()
+    // Criamos um client temporário que não persiste a sessão para não deslogar o master atual
+    const tempSupabase = createClient(config.public.supabase.url, config.public.supabase.key, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+    })
+
+    // 1. Cria o usuário no Auth
+    const { data: authData, error: authError } = await tempSupabase.auth.signUp({
+      email: newSubadminForm.value.email,
+      password: newSubadminForm.value.password,
+    })
+
+    if (authError) {
+      alert("Erro ao criar usuário no Auth (Supabase): " + authError.message)
+      return
+    }
+
+    const userId = authData.user?.id
+    if (!userId) {
+      alert("Erro desconhecido: Usuário não retornou um ID.")
+      return
+    }
+
+    // 2. Insere na tabela admins
+    const { error: dbError } = await supabase.from('admins').insert({
+      id: userId,
+      name: newSubadminForm.value.name,
+      email: newSubadminForm.value.email,
+      role: 'subadmin'
+    })
+
+    if (dbError) {
+      alert("Erro ao vincular conta na tabela admins: " + dbError.message)
+      return
+    }
+
+    alert("Subadmin criado com sucesso!")
+    newSubadminForm.value = { name: '', email: '', password: '' }
+    fetchData()
+  } catch (err) {
+    alert("Erro inesperado: " + err.message)
+  } finally {
+    creatingSubadmin.value = false
+  }
+}
+
+const deleteSubadmin = async (id) => {
+  if (!confirm("Tem certeza que deseja excluir o acesso deste subadmin? O usuário ainda existirá no Auth do Supabase, mas perderá o acesso ao painel.")) return
+  
+  const { error } = await supabase.from('admins').delete().eq('id', id)
+  if (error) {
+    alert("Erro ao remover subadmin: " + error.message)
+  } else {
+    fetchData()
+  }
 }
 
 onMounted(() => {
