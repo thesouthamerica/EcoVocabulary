@@ -205,7 +205,8 @@
 
       <!-- Conteúdo da Aba: DASHBOARD -->
       <div v-if="activeTab === 'dashboard'">
-        <AdminDashboard :schoolYear="selectedSchoolYear" :calendarYear="selectedCalendarYear" :adminId="adminId" />
+        <AdminDashboard v-if="adminRole !== 'master'" :schoolYear="selectedSchoolYear" :calendarYear="selectedCalendarYear" :adminId="adminId" />
+        <MasterDashboard v-else :adminId="adminId" />
       </div>
 
       <!-- Conteúdo da Aba: SUBADMINS (Apenas Master) -->
@@ -373,6 +374,7 @@ import { createClient } from '@supabase/supabase-js'
 import { useGameStore } from '~/stores/game'
 import { generateLevelsByYear } from '~/utils/levelGenerator'
 import AdminDashboard from '~/components/admin/AdminDashboard.vue'
+import MasterDashboard from '~/components/admin/MasterDashboard.vue'
 
 definePageMeta({
   layout: 'admin',
