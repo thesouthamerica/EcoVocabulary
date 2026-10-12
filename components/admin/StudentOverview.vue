@@ -65,7 +65,7 @@
           <div class="space-y-6">
             <div v-for="cat in metrics.categoryPerformance" :key="cat.category">
               <div class="flex justify-between mb-1">
-                <span class="text-sm font-bold text-gray-700 capitalize">{{ cat.category === 'association' ? 'Associação' : cat.category === 'translation' ? 'Tradução' : 'Sentenças' }}</span>
+                <span class="text-sm font-bold text-gray-700 capitalize">{{ cat.category === 'hangman' ? 'Jogo da Forca' : cat.category === 'association' ? 'Associação' : cat.category === 'translation' ? 'Tradução' : 'Sentenças' }}</span>
                 <span class="text-sm font-bold" :class="cat.accuracy < 50 ? 'text-red-500' : 'text-eco-green'">{{ cat.accuracy }}%</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2.5">

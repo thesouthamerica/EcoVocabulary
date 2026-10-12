@@ -60,6 +60,7 @@ export default defineEventHandler(async (event) => {
     'association': { correct: 0, total: 0 },
     'translation': { correct: 0, total: 0 },
     'sentence': { correct: 0, total: 0 },
+    'hangman': { correct: 0, total: 0 },
   }
 
   answers.forEach(a => {

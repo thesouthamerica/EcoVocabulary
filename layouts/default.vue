@@ -67,7 +67,7 @@
       <div class="mt-2 flex justify-center gap-4">
         <a href="https://github.com/thesouthamerica" class="text-eco-blue hover:text-eco-blue-light transition-colors font-bold">GitHub</a>
         <a href="#" class="text-eco-blue hover:text-eco-blue-light transition-colors font-bold">LinkedIn</a>
-        <a href="https://www.instagram.com/leonardo.bezerra39/" class="text-eco-blue hover:text-eco-blue-light transition-colors font-bold">Instagram</a>
+        <a href="https://www.instagram.com/leonardo.bezerra.dev/" class="text-eco-blue hover:text-eco-blue-light transition-colors font-bold">Instagram</a>
       </div>
       <p class="font-medium mt-3 text-gray-400">Erro com a aplicação? Entre em contato pelos links acima!</p>
     </footer>

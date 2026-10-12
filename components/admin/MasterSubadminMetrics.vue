@@ -85,7 +85,7 @@
           
           <div class="w-full mt-8 space-y-3" v-if="subMetrics.categoryPerformance.length > 0">
             <div v-for="cat in subMetrics.categoryPerformance" :key="cat.category" class="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-100">
-              <span class="font-bold text-gray-600 capitalize">{{ cat.category === 'association' ? 'Associação' : cat.category === 'translation' ? 'Tradução' : 'Sentenças' }}</span>
+              <span class="font-bold text-gray-600 capitalize">{{ cat.category === 'hangman' ? 'Jogo da Forca' : cat.category === 'association' ? 'Associação' : cat.category === 'translation' ? 'Tradução' : 'Sentenças' }}</span>
               <span class="font-black" :class="cat.accuracy < 50 ? 'text-red-500' : 'text-eco-green'">{{ cat.accuracy }}%</span>
             </div>
           </div>
@@ -162,7 +162,7 @@ const chartData = computed(() => {
   if (!subMetrics.value || !subMetrics.value.categoryPerformance) return { labels: [], datasets: [{ data: [] }] }
   
   const labels = subMetrics.value.categoryPerformance.map(c => 
-    c.category === 'association' ? 'Associação' : c.category === 'translation' ? 'Tradução' : 'Sentenças'
+    c.category === 'hangman' ? 'Jogo da Forca' : c.category === 'association' ? 'Associação' : c.category === 'translation' ? 'Tradução' : 'Sentenças'
   )
   const data = subMetrics.value.categoryPerformance.map(c => c.accuracy)
   
@@ -170,7 +170,7 @@ const chartData = computed(() => {
     labels,
     datasets: [{
       data,
-      backgroundColor: ['#4ade80', '#60a5fa', '#facc15'],
+      backgroundColor: ['#10b981', '#4ade80', '#60a5fa', '#facc15'],
       hoverOffset: 4
     }]
   }
