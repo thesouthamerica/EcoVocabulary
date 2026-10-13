@@ -16,34 +16,44 @@ export default defineEventHandler(async (event) => {
 
   const supabase = await serverSupabaseClient(event)
 
+  const cleanSlug = studentSlug.replace(/-\d{4}$/, '')
   const uniqueDbId = adminId ? `${studentSlug}-${adminId}` : studentSlug
 
   // 1. Fetch user progress (overall score)
-  let { data: progress } = await supabase
+  const candidateProgressNames = [
+    uniqueDbId,
+    adminId ? `${cleanSlug}-2026-${adminId}` : `${cleanSlug}-2026`,
+    adminId ? `${cleanSlug}-2027-${adminId}` : `${cleanSlug}-2027`,
+    adminId ? `${cleanSlug}-${adminId}` : cleanSlug,
+    studentSlug,
+    cleanSlug
+  ]
+
+  const { data: progressRows } = await supabase
     .from('user_progress')
     .select('score, current_level_index')
-    .eq('name', uniqueDbId)
-    .single()
-    
-  if (!progress) {
-    const { data: oldProgress } = await supabase
-      .from('user_progress')
-      .select('score, current_level_index')
-      .eq('name', studentSlug)
-      .eq('admin_id', adminId)
-      .single()
-    progress = oldProgress
-  }
+    .in('name', candidateProgressNames)
+    .order('score', { ascending: false })
+    .limit(1)
+
+  const progress = progressRows?.[0] || null
 
   // 2. Fetch all answers for this student
-  const thirtyDaysAgo = new Date()
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+  const candidateUserIds = new Set<string>([
+    uniqueDbId,
+    studentSlug,
+    cleanSlug
+  ])
+  if (adminId) {
+    candidateUserIds.add(`${cleanSlug}-${adminId}`)
+    candidateUserIds.add(`${cleanSlug}-2026-${adminId}`)
+    candidateUserIds.add(`${cleanSlug}-2027-${adminId}`)
+  }
 
   const { data: answers, error: answersError } = await supabase
     .from('user_answers')
     .select('*, questions(promptPt, type)')
-    .in('user_id', [uniqueDbId, studentSlug])
-    .gte('created_at', thirtyDaysAgo.toISOString())
+    .in('user_id', Array.from(candidateUserIds))
     .order('created_at', { ascending: true })
 
   if (answersError) {
@@ -88,10 +98,12 @@ export default defineEventHandler(async (event) => {
     if (a.is_correct) dailyStats[day].correct++
   })
 
-  const categoryPerformance = Object.entries(categoryStats).map(([k, stats]) => ({
-    category: k,
-    accuracy: stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0
-  }))
+  const categoryPerformance = Object.entries(categoryStats)
+    .filter(([_, stats]) => stats.total > 0)
+    .map(([k, stats]) => ({
+      category: k,
+      accuracy: Math.round((stats.correct / stats.total) * 100)
+    }))
 
   const learningCurve = Object.entries(dailyStats).map(([day, stats]) => ({
     date: day,

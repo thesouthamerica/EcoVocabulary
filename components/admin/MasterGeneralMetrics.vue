@@ -176,12 +176,19 @@ const chartData = computed(() => {
     c.category === 'hangman' ? 'Jogo da Forca' : c.category === 'association' ? 'Associação' : c.category === 'translation' ? 'Tradução' : 'Sentenças'
   )
   const data = metrics.value.categoryPerformance.map(c => c.accuracy)
+  const colorsMap = {
+    'association': '#10b981',
+    'translation': '#3b82f6',
+    'sentence': '#8b5cf6',
+    'hangman': '#f59e0b'
+  }
+  const backgroundColor = metrics.value.categoryPerformance.map(c => colorsMap[c.category] || '#6b7280')
   
   return {
     labels,
     datasets: [{
       data,
-      backgroundColor: ['#10b981', '#4ade80', '#60a5fa', '#facc15'],
+      backgroundColor,
       hoverOffset: 4
     }]
   }

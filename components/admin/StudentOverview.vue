@@ -48,12 +48,12 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-          <h3 class="font-black text-gray-800 text-lg mb-2">Curva de Aprendizado (30 dias)</h3>
+          <h3 class="font-black text-gray-800 text-lg mb-2">Curva de Aprendizado (Evolução)</h3>
           <p class="text-xs text-gray-500 mb-6">Evolução da taxa de acerto por dia jogado</p>
           <div class="w-full h-64 relative">
             <Line v-if="lineChartData.labels.length > 0" :data="lineChartData" :options="lineOptions" />
             <div v-else class="flex h-full items-center justify-center text-gray-400 text-sm italic">
-              Aluno ainda não respondeu perguntas nos últimos 30 dias.
+              Aluno ainda não possui histórico de respostas registradas.
             </div>
           </div>
         </div>
@@ -112,7 +112,9 @@ const fetchStudents = async () => {
     .order('first_name')
   
   students.value = data || []
-  if (students.value.length === 0) selectedStudentSlug.value = ''
+  if (students.value.length === 0 || !students.value.some(s => s.slug === selectedStudentSlug.value)) {
+    selectedStudentSlug.value = ''
+  }
 }
 
 onMounted(() => {

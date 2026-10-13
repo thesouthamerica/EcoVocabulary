@@ -64,29 +64,84 @@
               <p class="text-3xl font-black text-gray-800">{{ subMetrics.overview.avgAccuracy }}%</p>
             </div>
           </div>
-          <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-eco-blue">
-            <div class="text-4xl">⏱️</div>
+          <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-eco-yellow">
+            <div class="text-4xl">🎯</div>
             <div>
-              <p class="text-sm text-gray-500 font-bold uppercase tracking-wider">Tentativas Médias (Respostas)</p>
-              <p class="text-3xl font-black text-gray-800">{{ subMetrics.overview.totalAnswers }} totais</p>
+              <p class="text-sm text-gray-500 font-bold uppercase tracking-wider">Total de Respostas Registradas</p>
+              <p class="text-3xl font-black text-gray-800">{{ subMetrics.overview.totalAnswers }}</p>
             </div>
           </div>
         </div>
 
-        <!-- Curva de Aprendizado / Gargalos -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col items-center">
-          <h3 class="font-black text-gray-800 text-center mb-2 w-full text-lg">Desempenho por Categoria (Curva de Aprendizado)</h3>
-          <p class="text-xs text-gray-500 text-center mb-6">Taxa de acerto por tipo de atividade desta turma</p>
-          
-          <div class="w-full max-w-[250px] aspect-square relative flex items-center justify-center">
-            <Doughnut v-if="chartData.datasets[0].data.length > 0" :data="chartData" :options="chartOptions" />
-            <div v-else class="text-gray-400 text-sm italic text-center">Sem dados de jogo para esta turma...</div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Rankings de Perguntas da Turma/Professor -->
+          <div class="lg:col-span-2 space-y-6">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+              <div class="bg-green-50 p-4 border-b border-green-100">
+                <h3 class="font-black text-green-800 flex items-center gap-2">🌟 Perguntas com Mais Acertos (Desta Turma)</h3>
+              </div>
+              <div class="p-0">
+                <table class="w-full text-left text-sm">
+                  <thead>
+                    <tr class="bg-gray-50 text-gray-500 uppercase tracking-widest text-xs border-b border-gray-100">
+                      <th class="p-3">Pergunta</th>
+                      <th class="p-3 text-center">Acertos (%)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="q in subMetrics.easiestQuestions" :key="q.id" class="border-b border-gray-50 hover:bg-gray-50">
+                      <td class="p-3 font-bold text-gray-700">{{ q.title }}</td>
+                      <td class="p-3 text-center font-bold text-eco-green">{{ q.accuracy }}%</td>
+                    </tr>
+                    <tr v-if="!subMetrics.easiestQuestions || subMetrics.easiestQuestions.length === 0">
+                      <td colspan="2" class="p-6 text-center text-gray-400">Sem dados suficientes</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+              <div class="bg-red-50 p-4 border-b border-red-100">
+                <h3 class="font-black text-red-800 flex items-center gap-2">🚨 Perguntas com Mais Erros (Desta Turma)</h3>
+              </div>
+              <div class="p-0">
+                <table class="w-full text-left text-sm">
+                  <thead>
+                    <tr class="bg-gray-50 text-gray-500 uppercase tracking-widest text-xs border-b border-gray-100">
+                      <th class="p-3">Pergunta</th>
+                      <th class="p-3 text-center">Acertos (%)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="q in subMetrics.hardestQuestions" :key="q.id" class="border-b border-gray-50 hover:bg-gray-50">
+                      <td class="p-3 font-bold text-gray-700">{{ q.title }}</td>
+                      <td class="p-3 text-center font-bold text-red-500">{{ q.accuracy }}%</td>
+                    </tr>
+                    <tr v-if="!subMetrics.hardestQuestions || subMetrics.hardestQuestions.length === 0">
+                      <td colspan="2" class="p-6 text-center text-gray-400">Sem dados suficientes</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
-          
-          <div class="w-full mt-8 space-y-3" v-if="subMetrics.categoryPerformance.length > 0">
-            <div v-for="cat in subMetrics.categoryPerformance" :key="cat.category" class="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-100">
-              <span class="font-bold text-gray-600 capitalize">{{ cat.category === 'hangman' ? 'Jogo da Forca' : cat.category === 'association' ? 'Associação' : cat.category === 'translation' ? 'Tradução' : 'Sentenças' }}</span>
-              <span class="font-black" :class="cat.accuracy < 50 ? 'text-red-500' : 'text-eco-green'">{{ cat.accuracy }}%</span>
+
+          <!-- Curva de Aprendizado / Gargalos -->
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col items-center">
+            <h3 class="font-black text-gray-800 text-center mb-2 w-full text-lg">Desempenho por Categoria</h3>
+            <p class="text-xs text-gray-500 text-center mb-6">Taxa de acerto por tipo de atividade desta turma</p>
+            
+            <div class="w-full max-w-[250px] aspect-square relative flex items-center justify-center">
+              <Doughnut v-if="chartData.datasets[0].data.length > 0" :data="chartData" :options="chartOptions" />
+              <div v-else class="text-gray-400 text-sm italic text-center">Sem dados de jogo para esta turma...</div>
+            </div>
+            
+            <div class="w-full mt-8 space-y-3" v-if="subMetrics.categoryPerformance.length > 0">
+              <div v-for="cat in subMetrics.categoryPerformance" :key="cat.category" class="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-100">
+                <span class="font-bold text-gray-600 capitalize">{{ cat.category === 'hangman' ? 'Jogo da Forca' : cat.category === 'association' ? 'Associação' : cat.category === 'translation' ? 'Tradução' : 'Sentenças' }}</span>
+                <span class="font-black" :class="cat.accuracy < 50 ? 'text-red-500' : 'text-eco-green'">{{ cat.accuracy }}%</span>
+              </div>
             </div>
           </div>
         </div>
@@ -123,6 +178,10 @@ const loadInitialMetrics = async () => {
   try {
     const response = await $fetch('/api/admin/master-metrics?type=subadmins_list')
     metrics.value = response
+    if (response?.subadminsList?.length > 0 && !selectedSubadminId.value) {
+      selectedSubadminId.value = response.subadminsList[0].id
+      fetchSubadminData()
+    }
   } catch (err) {
     console.error(err)
     error.value = err
@@ -165,12 +224,19 @@ const chartData = computed(() => {
     c.category === 'hangman' ? 'Jogo da Forca' : c.category === 'association' ? 'Associação' : c.category === 'translation' ? 'Tradução' : 'Sentenças'
   )
   const data = subMetrics.value.categoryPerformance.map(c => c.accuracy)
+  const colorsMap = {
+    'association': '#10b981',
+    'translation': '#3b82f6',
+    'sentence': '#8b5cf6',
+    'hangman': '#f59e0b'
+  }
+  const backgroundColor = subMetrics.value.categoryPerformance.map(c => colorsMap[c.category] || '#6b7280')
   
   return {
     labels,
     datasets: [{
       data,
-      backgroundColor: ['#10b981', '#4ade80', '#60a5fa', '#facc15'],
+      backgroundColor,
       hoverOffset: 4
     }]
   }
