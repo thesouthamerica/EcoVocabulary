@@ -5,14 +5,23 @@
       
       <!-- Questions -->
       <div v-if="!gameStore.isLevelFinished && gameStore.currentQuestion" class="w-full">
-        <div class="text-center mb-8 animate-fade-in">
-          <h1 class="text-3xl sm:text-4xl font-black text-eco-green mb-2">{{ gameStore.currentLevel.title }}</h1>
-          <p class="text-gray-600 font-bold text-lg">{{ gameStore.currentLevel.description }}</p>
+        <div class="text-center mb-4 sm:mb-6 animate-fade-in">
+          <h1 class="text-2xl sm:text-3xl md:text-4xl font-black text-eco-green mb-1">{{ gameStore.currentLevel.title }}</h1>
+          <p class="text-gray-600 font-bold text-sm sm:text-base">{{ gameStore.currentLevel.description }}</p>
         </div>
         
         <Transition name="slide" mode="out-in">
+          <HangmanCard 
+            v-if="gameStore.currentQuestion.type === 'hangman'"
+            :key="'hangman-' + gameStore.currentQuestion.id"
+            :question="gameStore.currentQuestion"
+            :questionIndex="gameStore.currentQuestionIndex"
+            :totalQuestions="gameStore.currentLevel?.questions?.length || 5"
+            @answer="handleAnswer"
+          />
           <QuestionCard 
-            :key="gameStore.currentQuestion.id"
+            v-else
+            :key="'quiz-' + gameStore.currentQuestion.id"
             :question="gameStore.currentQuestion"
             @answer="handleAnswer"
           />
@@ -67,6 +76,7 @@ import { useRouter } from 'vue-router'
 import { useSupabaseClient } from '#imports'
 import { useGameStore } from '~/stores/game'
 import QuestionCard from '~/components/game/QuestionCard.vue'
+import HangmanCard from '~/components/game/HangmanCard.vue'
 
 const gameStore = useGameStore()
 const router = useRouter()

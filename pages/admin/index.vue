@@ -11,7 +11,6 @@
       </p>
       <div class="mt-4 text-xs font-mono bg-white inline-block px-3 py-2 rounded border border-red-100 text-red-500 font-bold">
         Seu UID atual: {{ adminId }}
-        Seu UID atual: {{ admin.id }}
       </div>
     </div>
 
@@ -99,8 +98,11 @@
         <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t-4 border-t-eco-blue glass-panel p-6 bg-white rounded-xl shadow-sm">
           <h2 class="text-2xl font-black text-gray-800 flex items-center gap-2">Níveis desta Turma</h2>
           <div class="flex gap-2">
-            <button @click="autoGenerateLevels" class="btn-primary text-sm px-4 py-2 flex items-center gap-1 shadow-md bg-eco-green hover:bg-eco-green-light" :disabled="loading">
-              <span v-if="loading">Gerando...</span>
+            <button @click="openAutoGenerateModal" class="btn-primary text-sm px-4 py-2 flex items-center gap-1 shadow-md bg-eco-green hover:bg-eco-green-light transition-all" :disabled="isGeneratingLevels || loading">
+              <span v-if="isGeneratingLevels" class="flex items-center gap-1.5">
+                <span class="animate-spin w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full"></span>
+                Gerando 10 Níveis...
+              </span>
               <span v-else>⚡ Gerar 10 Níveis</span>
             </button>
             <button @click="openLevelModal()" class="btn-primary text-sm px-4 py-2 shadow-md">+ Novo Nível</button>
@@ -158,6 +160,7 @@
                             <div class="w-full md:w-32 h-32 bg-gray-100 rounded-lg flex items-center justify-center shrink-0 border border-gray-200 overflow-hidden">
                               <img v-if="q.imageUrl && q.imageUrl.startsWith('http')" :src="q.imageUrl" class="w-full h-full object-cover" />
                               <span v-else-if="q.imageUrl" class="text-6xl">{{ q.imageUrl }}</span>
+                              <span v-else-if="q.type === 'hangman'" class="text-5xl">🌳</span>
                               <span v-else-if="q.type === 'association'" class="text-4xl text-gray-400">🖼️</span>
                               <span v-else class="text-4xl text-gray-400">📝</span>
                             </div>
@@ -165,9 +168,23 @@
                             <div class="flex-1 min-w-0">
                               <div class="flex justify-between items-start mb-2">
                                 <div>
-                                  <span class="text-xs font-bold text-indigo-500 uppercase tracking-widest block mb-1">Pergunta {{ index + 1 }}</span>
+                                  <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Pergunta {{ index + 1 }}</span>
+                                    <span 
+                                      v-if="q.type === 'hangman'" 
+                                      class="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center gap-1"
+                                    >
+                                      🌳 Jogo da Forca
+                                    </span>
+                                    <span 
+                                      v-else 
+                                      class="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 border border-indigo-200"
+                                    >
+                                      🎯 Quiz
+                                    </span>
+                                  </div>
                                   <p class="font-black text-gray-800 text-base" :title="'Tradução/Dica: ' + q.promptEn">{{ q.promptPt }}</p>
-                                  <p class="text-gray-500 text-sm italic">Dica/Tradução: {{ q.promptEn }}</p>
+                                  <p class="text-gray-500 text-sm italic">Palavra em Inglês: <strong class="text-eco-blue">{{ q.promptEn }}</strong></p>
                                 </div>
                                 <div class="flex gap-2 shrink-0 ml-2">
                                   <button @click="openQuestionModal(q, level.id)" class="p-2 bg-indigo-50 rounded-lg text-indigo-600 hover:bg-indigo-100 transition-colors" title="Editar">✏️</button>
@@ -175,8 +192,27 @@
                                 </div>
                               </div>
                               
-                              <!-- Lista de Opções -->
-                              <div class="mt-4 grid grid-cols-2 gap-2">
+                              <!-- Se for Jogo da Forca: Prévia das Letras -->
+                              <div v-if="q.type === 'hangman'" class="mt-3 space-y-2">
+                                <div class="flex flex-wrap gap-1.5 items-center bg-emerald-50/70 p-2.5 rounded-lg border border-emerald-200/80">
+                                  <span class="text-xs font-bold text-emerald-800 mr-1">Letras:</span>
+                                  <span 
+                                    v-for="(letter, lIdx) in q.promptEn.split('')" 
+                                    :key="lIdx" 
+                                    class="w-6 h-6 flex items-center justify-center font-black text-xs bg-white text-emerald-700 border border-emerald-300 rounded shadow-xs uppercase"
+                                  >
+                                    {{ letter === ' ' ? '␣' : letter }}
+                                  </span>
+                                  <span class="text-[11px] text-emerald-600 ml-auto font-medium">6 chances</span>
+                                </div>
+                                <div v-if="q.options?.[0]?.hint" class="flex items-center gap-1.5 text-xs text-amber-800 font-bold bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200 w-fit">
+                                  <span>💡 Dica:</span>
+                                  <span class="font-black text-amber-950">{{ q.options[0].hint }}</span>
+                                </div>
+                              </div>
+
+                              <!-- Se for Quiz: Lista de Opções -->
+                              <div v-else class="mt-4 grid grid-cols-2 gap-2">
                                 <div v-for="opt in q.options" :key="opt.id" class="px-3 py-2 rounded-lg text-sm font-medium border" :class="opt.isCorrect ? 'bg-green-50 border-green-200 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-600'">
                                   <span v-if="opt.isCorrect" class="mr-1">✅</span>
                                   <span v-else class="mr-1 text-gray-400">❌</span>
@@ -276,6 +312,78 @@
       </div>
     </div>
 
+    <!-- Modal de Confirmação: Gerar 10 Níveis BNCC -->
+    <div v-if="showAutoGenerateModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden animate-fade-in-up">
+        <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-eco-blue p-6 text-white flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center text-2xl shadow-inner">
+            ⚡
+          </div>
+          <div>
+            <h2 class="text-xl font-black">Gerador de Níveis BNCC</h2>
+            <p class="text-xs text-white/80 font-medium">Geração automática de 10 níveis educativos</p>
+          </div>
+        </div>
+
+        <div class="p-6 space-y-4">
+          <div class="bg-emerald-50/80 border border-emerald-200/80 rounded-xl p-4 text-sm text-emerald-950 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-gray-700">🎯 Turma Alvo:</span>
+              <span class="font-black text-emerald-700 bg-white px-3 py-1 rounded-full border border-emerald-200 shadow-xs text-xs">
+                {{ selectedSchoolYear }}º Ano do Ensino Fundamental
+              </span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-gray-700">📅 Ano Letivo:</span>
+              <span class="font-black text-emerald-700 bg-white px-3 py-1 rounded-full border border-emerald-200 shadow-xs text-xs">
+                {{ selectedCalendarYear }}
+              </span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-gray-700">🎮 Formato:</span>
+              <span class="font-black text-emerald-700 bg-white px-3 py-1 rounded-full border border-emerald-200 shadow-xs text-xs">
+                Estilo Quiz (Múltipla Escolha)
+              </span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-gray-700">📊 Quantidade:</span>
+              <span class="font-black text-emerald-700 bg-white px-3 py-1 rounded-full border border-emerald-200 shadow-xs text-xs">
+                10 Níveis (50 Perguntas)
+              </span>
+            </div>
+          </div>
+
+          <p class="text-gray-600 text-sm leading-relaxed">
+            Serão gerados automaticamente <b>10 níveis</b> com <b>5 perguntas cada</b>, calibrados de acordo com a progressão pedagógica da BNCC para o <b>{{ selectedSchoolYear }}º Ano</b>.
+          </p>
+
+          <div v-if="generateError" class="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-xs font-bold animate-shake">
+            ⚠️ {{ generateError }}
+          </div>
+
+          <div class="flex justify-end gap-3 pt-2">
+            <button 
+              type="button" 
+              @click="showAutoGenerateModal = false" 
+              :disabled="isGeneratingLevels"
+              class="px-5 py-2.5 text-gray-600 hover:bg-gray-100 rounded-xl font-bold transition-colors text-sm"
+            >
+              Cancelar
+            </button>
+            <button 
+              type="button" 
+              @click="executeAutoGenerateLevels" 
+              :disabled="isGeneratingLevels" 
+              class="btn-primary !py-2.5 !px-6 !rounded-xl bg-emerald-600 hover:bg-emerald-700 flex items-center gap-2 disabled:opacity-70 shadow-md font-bold text-sm"
+            >
+              <span v-if="isGeneratingLevels" class="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
+              <span>{{ isGeneratingLevels ? 'Gerando Conteúdo...' : '⚡ Confirmar e Gerar 10 Níveis' }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Modal Nível -->
     <div v-if="showLevelModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <div class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden animate-fade-in-up">
@@ -311,10 +419,60 @@
           <h2 class="text-2xl font-black text-white">{{ editingQuestion ? 'Editar Pergunta' : 'Nova Pergunta' }}</h2>
         </div>
         <form @submit.prevent="saveQuestion" class="p-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- Seletor do Modelo da Pergunta -->
+          <div class="mb-6">
+            <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-2">Modelo da Atividade</label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <!-- Opção 1: Quiz Tradicional -->
+              <button 
+                type="button" 
+                @click="questionModel = 'quiz'"
+                :class="[
+                  'p-3.5 rounded-xl border-2 text-left transition-all flex items-start gap-3',
+                  questionModel === 'quiz' 
+                    ? 'border-indigo-600 bg-indigo-50/70 shadow-sm ring-2 ring-indigo-500/20' 
+                    : 'border-gray-200 hover:border-gray-300 bg-white'
+                ]"
+              >
+                <div class="text-2xl mt-0.5">🎯</div>
+                <div>
+                  <div class="font-black text-gray-800 text-sm flex items-center gap-1.5">
+                    Quiz (Múltipla Escolha)
+                    <span v-if="questionModel === 'quiz'" class="text-[10px] bg-indigo-600 text-white px-1.5 py-0.5 rounded-full font-bold">Ativo</span>
+                  </div>
+                  <p class="text-xs text-gray-500 mt-0.5">Modelo clássico com alternativas de resposta e 1 opção correta.</p>
+                </div>
+              </button>
+
+              <!-- Opção 2: Jogo da Forca Ecológico -->
+              <button 
+                type="button" 
+                @click="questionModel = 'hangman'"
+                :class="[
+                  'p-3.5 rounded-xl border-2 text-left transition-all flex items-start gap-3',
+                  questionModel === 'hangman' 
+                    ? 'border-eco-green bg-emerald-50/70 shadow-sm ring-2 ring-emerald-500/20' 
+                    : 'border-gray-200 hover:border-gray-300 bg-white'
+                ]"
+              >
+                <div class="text-2xl mt-0.5">🌳</div>
+                <div>
+                  <div class="font-black text-gray-800 text-sm flex items-center gap-1.5">
+                    Jogo da Forca Ecológico
+                    <span v-if="questionModel === 'hangman'" class="text-[10px] bg-eco-green text-white px-1.5 py-0.5 rounded-full font-bold">Novo!</span>
+                  </div>
+                  <p class="text-xs text-gray-500 mt-0.5">Descobrir letra por letra antes que as folhas da árvore caiam!</p>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Formulário: SE FOR QUIZ -->
+          <div v-if="questionModel === 'quiz'" class="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
             <div class="space-y-4">
               <div>
-                <label class="block text-sm font-bold text-gray-700 mb-1">Tipo de Pergunta</label>
+                <label class="block text-sm font-bold text-gray-700 mb-1">Tipo de Quiz</label>
                 <select v-model="formQuestion.type" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-eco-blue outline-none transition-shadow bg-white">
                   <option value="translation">Tradução</option>
                   <option value="association">Associação de Imagem</option>
@@ -349,6 +507,93 @@
                 <input type="radio" :name="'correctOption'" :value="idx" v-model="correctOptionIndex" class="w-5 h-5 text-indigo-600 focus:ring-indigo-500 cursor-pointer" title="Marcar como correta" />
                 <input v-model="opt.text" type="text" required class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 outline-none" :placeholder="'Texto da Opção ' + (idx + 1)" />
                 <button type="button" @click="removeOption(idx)" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-1.5 rounded-md transition-colors" title="Remover opção" v-if="formQuestion.options.length > 2">Excluir</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Formulário: SE FOR JOGO DA FORCA -->
+          <div v-else class="space-y-5 animate-fade-in">
+            <!-- Banner Informativo -->
+            <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-start gap-3">
+              <span class="text-2xl mt-0.5">🌱</span>
+              <div>
+                <h4 class="font-extrabold text-emerald-900 text-sm">Como funciona o Jogo da Forca no Eco-Vocabulary?</h4>
+                <p class="text-xs text-emerald-800 mt-1 leading-relaxed">
+                  O aluno terá <strong>6 tentativas</strong> para adivinhar a palavra em inglês letra por letra, usando o teclado virtual ou físico. A cada erro, folhas da árvore caem! Não é necessário cadastrar alternativas de múltipla escolha.
+                </p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">Palavra Secreta em Inglês (a ser adivinhada) *</label>
+                <input 
+                  v-model="formQuestion.promptEn" 
+                  type="text" 
+                  required 
+                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-eco-green outline-none uppercase font-black tracking-wider text-base" 
+                  placeholder="Ex: TEACHER, APPLE, WATER" 
+                />
+                <p class="text-xs text-gray-500 mt-1">Palavra que o aluno precisará acertar no jogo.</p>
+              </div>
+
+              <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">Tradução em Português *</label>
+                <input 
+                  v-model="formQuestion.promptPt" 
+                  type="text" 
+                  required 
+                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-eco-green outline-none font-bold text-base" 
+                  placeholder="Ex: Professor(a), Maçã, Água" 
+                />
+                <p class="text-xs text-gray-500 mt-1">Significado em português da palavra.</p>
+              </div>
+            </div>
+
+            <!-- Campo Dica da Palavra para o Admin -->
+            <div>
+              <label class="block text-sm font-bold text-gray-700 mb-1 flex items-center gap-1.5">
+                <span>💡 Dica da Palavra (Exibida abaixo das letras no jogo)</span>
+              </label>
+              <input 
+                v-model="formQuestion.hint" 
+                type="text" 
+                class="w-full px-4 py-2.5 border border-amber-300 bg-amber-50/40 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none font-bold text-base text-gray-800 placeholder:font-normal placeholder:text-gray-400" 
+                placeholder="Ex: Cor Vermelha, Animal que late, Fruta cítrica..." 
+              />
+              <p class="text-xs text-amber-700 font-medium mt-1">Esta dica será exibida diretamente abaixo das caixas de letras para guiar o aluno durante a partida.</p>
+            </div>
+
+            <div>
+              <label class="block text-sm font-bold text-gray-700 mb-1">Emoji ou Imagem de Dica Visual (Opcional)</label>
+              <input 
+                v-model="formQuestion.imageUrl" 
+                type="text" 
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-eco-green outline-none" 
+                placeholder="Ex: 🧑‍🏫, 🍎, 💧 ou link de imagem" 
+              />
+              <p class="text-xs text-gray-500 mt-1">Emojis como 🍎 ou 🌳 aparecem destacados no jogo como dica lúdica.</p>
+            </div>
+
+            <!-- Prévia Dinâmica das Letras -->
+            <div v-if="formQuestion.promptEn.trim()" class="p-4 bg-gray-50 rounded-xl border border-gray-200 space-y-2">
+              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider block">Prévia das Caixas de Letras no Jogo:</span>
+              <div class="flex flex-wrap gap-2 items-center">
+                <template v-for="(char, cIdx) in formQuestion.promptEn.trim().toUpperCase().split('')" :key="cIdx">
+                  <div v-if="char === ' '" class="w-4"></div>
+                  <div v-else class="w-10 h-11 rounded-lg border-2 border-gray-700 bg-white flex items-center justify-center font-black text-lg text-gray-800 shadow-xs">
+                    {{ char }}
+                  </div>
+                </template>
+                <span class="text-xs text-gray-400 ml-2 font-bold">({{ formQuestion.promptEn.trim().replace(/\s/g, '').length }} letras)</span>
+              </div>
+              <!-- Prévia da Dica -->
+              <div v-if="formQuestion.hint?.trim() || formQuestion.promptPt?.trim()" class="pt-2 border-t border-gray-200 flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 font-extrabold text-xs inline-flex items-center gap-1">
+                  <span>💡</span>
+                  <span>Dica no jogo:</span>
+                  <span class="text-amber-950 underline underline-offset-2">{{ formQuestion.hint?.trim() || formQuestion.promptPt?.trim() }}</span>
+                </span>
               </div>
             </div>
           </div>
@@ -412,6 +657,11 @@ const newStudentLast = ref('')
 
 const expandedLevelId = ref(null)
 
+// AUTO-GENERATE STATES
+const showAutoGenerateModal = ref(false)
+const isGeneratingLevels = ref(false)
+const generateError = ref('')
+
 // LEVEL STATES
 const showLevelModal = ref(false)
 const savingLevel = ref(false)
@@ -424,8 +674,9 @@ const savingQuestion = ref(false)
 const editingQuestion = ref(null)
 const currentLevelIdForQuestion = ref(null)
 const correctOptionIndex = ref(0)
+const questionModel = ref('quiz') // 'quiz' | 'hangman'
 const formQuestion = ref({
-  type: 'translation', promptPt: '', promptEn: '', imageUrl: '', options: []
+  type: 'translation', promptPt: '', promptEn: '', imageUrl: '', hint: '', options: []
 })
 
 const fetchData = async () => {
@@ -676,18 +927,34 @@ const openQuestionModal = (q, levelId) => {
   editingQuestion.value = q
   
   if (q) {
-    formQuestion.value = { 
-      type: q.type, 
-      promptPt: q.promptPt, 
-      promptEn: q.promptEn, 
-      imageUrl: q.imageUrl || '',
-      options: JSON.parse(JSON.stringify(q.options))
+    if (q.type === 'hangman') {
+      questionModel.value = 'hangman'
+      formQuestion.value = { 
+        type: 'hangman', 
+        promptPt: q.promptPt || '', 
+        promptEn: q.promptEn || '', 
+        imageUrl: q.imageUrl || '',
+        hint: q.options?.[0]?.hint || '',
+        options: []
+      }
+    } else {
+      questionModel.value = 'quiz'
+      formQuestion.value = { 
+        type: q.type || 'translation', 
+        promptPt: q.promptPt, 
+        promptEn: q.promptEn, 
+        imageUrl: q.imageUrl || '',
+        hint: q.options?.[0]?.hint || '',
+        options: JSON.parse(JSON.stringify(q.options || []))
+      }
+      const correctIdx = formQuestion.value.options.findIndex(o => o.isCorrect)
+      correctOptionIndex.value = correctIdx !== -1 ? correctIdx : 0
     }
-    const correctIdx = formQuestion.value.options.findIndex(o => o.isCorrect)
-    correctOptionIndex.value = correctIdx !== -1 ? correctIdx : 0
   } else {
+    // Nova pergunta (padrão Quiz, mas professor pode alternar com 1 clique)
+    questionModel.value = 'quiz'
     formQuestion.value = { 
-      type: 'translation', promptPt: '', promptEn: '', imageUrl: '', 
+      type: 'translation', promptPt: '', promptEn: '', imageUrl: '', hint: '',
       options: [
         { id: 1, text: '', isCorrect: true }, { id: 2, text: '', isCorrect: false },
         { id: 3, text: '', isCorrect: false }, { id: 4, text: '', isCorrect: false }
@@ -720,17 +987,50 @@ const saveQuestion = async () => {
       return
     }
   }
-  
-  const optionsToSave = formQuestion.value.options.map((opt, idx) => ({
-    ...opt, isCorrect: idx === correctOptionIndex.value
-  }))
+
+  let optionsToSave = []
+  let questionType = formQuestion.value.type
+
+  if (questionModel.value === 'hangman') {
+    questionType = 'hangman'
+    if (!formQuestion.value.promptEn.trim()) {
+      alert("Por favor, preencha a palavra secreta em inglês para a forca.")
+      savingQuestion.value = false
+      return
+    }
+    if (!formQuestion.value.promptPt.trim()) {
+      alert("Por favor, preencha a tradução em português.")
+      savingQuestion.value = false
+      return
+    }
+    // Salva a opção com a palavra em inglês e a dica informada pelo admin
+    const hintVal = formQuestion.value.hint?.trim() || formQuestion.value.promptPt.trim()
+    optionsToSave = [
+      { 
+        id: 1, 
+        text: formQuestion.value.promptEn.trim().toUpperCase(), 
+        isCorrect: true,
+        hint: hintVal
+      }
+    ]
+  } else {
+    // Validações do Quiz
+    if (!formQuestion.value.options || formQuestion.value.options.length < 2) {
+      alert("O quiz precisa de pelo menos 2 opções de resposta.")
+      savingQuestion.value = false
+      return
+    }
+    optionsToSave = formQuestion.value.options.map((opt, idx) => ({
+      ...opt, isCorrect: idx === correctOptionIndex.value
+    }))
+  }
   
   const payload = {
     level_id: currentLevelIdForQuestion.value,
-    type: formQuestion.value.type,
-    promptPt: formQuestion.value.promptPt,
-    promptEn: formQuestion.value.promptEn,
-    imageUrl: formQuestion.value.imageUrl || null,
+    type: questionType,
+    promptPt: formQuestion.value.promptPt.trim(),
+    promptEn: formQuestion.value.promptEn.trim(),
+    imageUrl: formQuestion.value.imageUrl?.trim() || null,
     options: optionsToSave
   }
   
@@ -761,93 +1061,168 @@ const deleteQuestion = async (id) => {
   await fetchData()
 }
 
-const autoGenerateLevels = async () => {
+const openAutoGenerateModal = () => {
   if (selectedSchoolYear.value === 0) {
     alert("Por favor, selecione um Ano Escolar válido (1º ao 9º) antes de gerar níveis.");
     return;
   }
-  
-  if (!confirm(`Gerar 10 níveis adequados à BNCC para o ${selectedSchoolYear.value}º Ano?`)) return;
-  
-  loading.value = true;
-  
-  // Utiliza a função global (auto-importada do diretório utils do Nuxt)
-  const levelsData = generateLevelsByYear(selectedSchoolYear.value);
+  generateError.value = ''
+  showAutoGenerateModal.value = true
+}
 
-  if (!levelsData || levelsData.length === 0) {
-    alert(`Sem dados pré-configurados para o ${selectedSchoolYear.value}º Ano.`);
-    loading.value = false;
-    return;
+const autoGenerateLevels = () => {
+  openAutoGenerateModal()
+}
+
+const executeAutoGenerateLevels = async () => {
+  if (selectedSchoolYear.value === 0) {
+    generateError.value = "Por favor, selecione um Ano Escolar válido (1º ao 9º)."
+    return
   }
 
-  const shuffle = (array) => {
-    let currentIndex = array.length, randomIndex;
-    while (currentIndex !== 0) {
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-      [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
-    }
-    return array;
-  };
+  isGeneratingLevels.value = true
+  generateError.value = ''
 
   try {
-    const { data: maxLevelData } = await supabase.from('levels').select('id').order('id', { ascending: false }).limit(1);
-    let absoluteMaxLevelId = maxLevelData && maxLevelData.length > 0 ? maxLevelData[0].id : 0;
+    // 1. Obter níveis calibrados da BNCC para o ano selecionado
+    const levelsData = generateLevelsByYear(selectedSchoolYear.value)
+    if (!levelsData || levelsData.length === 0) {
+      throw new Error(`Sem dados pré-configurados para o ${selectedSchoolYear.value}º Ano.`)
+    }
 
-    const { data: maxQuestionData } = await supabase.from('questions').select('id').order('id', { ascending: false }).limit(1);
-    let absoluteMaxQuestionId = maxQuestionData && maxQuestionData.length > 0 ? maxQuestionData[0].id : 0;
+    // 2. Resolver admin_id garantido
+    let currentAdminId = adminId.value
+    if (!currentAdminId) {
+      const { data: userData } = await supabase.auth.getUser()
+      currentAdminId = userData?.user?.id
+    }
+    if (!currentAdminId) {
+      throw new Error("Não foi possível identificar o administrador logado. Por favor, recarregue a página.")
+    }
 
-    for (const levelData of levelsData) {
-      absoluteMaxLevelId++;
-      
-      const newLevel = {
-        id: absoluteMaxLevelId,
+    // 3. Obter maiores IDs do banco de dados para evitar conflito de Primary Key
+    const { data: maxLevelData, error: maxLevelErr } = await supabase
+      .from('levels')
+      .select('id')
+      .order('id', { ascending: false })
+      .limit(1)
+    if (maxLevelErr) throw maxLevelErr
+    let startLevelId = (maxLevelData && maxLevelData.length > 0) ? Number(maxLevelData[0].id) : 0
+
+    const { data: maxQuestionData, error: maxQuestionErr } = await supabase
+      .from('questions')
+      .select('id')
+      .order('id', { ascending: false })
+      .limit(1)
+    if (maxQuestionErr) throw maxQuestionErr
+    let startQuestionId = (maxQuestionData && maxQuestionData.length > 0) ? Number(maxQuestionData[0].id) : 0
+
+    const shuffle = (array) => {
+      let currentIndex = array.length, randomIndex;
+      while (currentIndex !== 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+      }
+      return array;
+    };
+
+    // 4. Montar os 10 níveis para inserção em lote
+    const levelsToInsert = []
+    const levelQuestionsMap = []
+
+    for (let i = 0; i < levelsData.length; i++) {
+      const levelData = levelsData[i]
+      const newLevelId = startLevelId + i + 1
+
+      levelsToInsert.push({
+        id: newLevelId,
         title: levelData.title,
         description: levelData.description,
-        admin_id: adminId.value,
+        admin_id: currentAdminId,
         school_year: selectedSchoolYear.value,
         calendar_year: selectedCalendarYear.value
-      };
+      })
 
-      await supabase.from('levels').insert([newLevel]);
-      
-      for (const item of levelData.items) {
-        absoluteMaxQuestionId++;
-        
-        let allWords = [...levelData.items.map(i => i.en), ...levelData.distractors];
-        allWords = allWords.filter(w => w !== item.en);
-        shuffle(allWords);
-        
-        const incorrectWords = allWords.slice(0, 3);
+      levelQuestionsMap.push({
+        levelId: newLevelId,
+        items: levelData.items,
+        distractors: levelData.distractors
+      })
+    }
+
+    // 5. Inserir todos os 10 níveis em batch
+    const { data: insertedLevels, error: insertLevelError } = await supabase
+      .from('levels')
+      .insert(levelsToInsert)
+      .select()
+
+    if (insertLevelError) {
+      throw new Error(`Falha ao registrar níveis no banco de dados: ${insertLevelError.message}`)
+    }
+
+    // 6. Montar as 50 perguntas no estilo Quiz (4 opções por pergunta)
+    const questionsToInsert = []
+    let currentQuestionId = startQuestionId
+
+    for (const group of levelQuestionsMap) {
+      for (const item of group.items) {
+        currentQuestionId++
+
+        let allWords = [...group.items.map(i => i.en), ...(group.distractors || [])]
+        // Remove palavra correta e duplicatas case-insensitive
+        allWords = allWords.filter(w => w.trim().toLowerCase() !== item.en.trim().toLowerCase())
+        allWords = Array.from(new Set(allWords))
+        shuffle(allWords)
+
+        const incorrectWords = allWords.slice(0, 3)
+        while (incorrectWords.length < 3) {
+          incorrectWords.push(`Opção ${incorrectWords.length + 1}`)
+        }
+
         const optionsArray = [
           { id: 1, text: item.en, isCorrect: true },
           { id: 2, text: incorrectWords[0], isCorrect: false },
           { id: 3, text: incorrectWords[1], isCorrect: false },
           { id: 4, text: incorrectWords[2], isCorrect: false }
-        ];
-        
-        shuffle(optionsArray);
-        optionsArray.forEach((opt, idx) => { opt.id = idx + 1; });
-        
-        const newQuestion = {
-          id: absoluteMaxQuestionId,
-          level_id: absoluteMaxLevelId,
-          type: item.type,
+        ]
+
+        shuffle(optionsArray)
+        optionsArray.forEach((opt, idx) => { opt.id = idx + 1; })
+
+        questionsToInsert.push({
+          id: currentQuestionId,
+          level_id: group.levelId,
+          type: 'translation', // Formato Quiz
           promptPt: item.pt,
           promptEn: item.en,
           imageUrl: null,
           options: optionsArray
-        };
-        
-        await supabase.from('questions').insert([newQuestion]);
+        })
       }
     }
-    alert(`10 níveis e 50 perguntas gerados com sucesso para o ${selectedSchoolYear.value}º Ano!`);
-    await fetchData();
-  } catch (e) {
-    alert("Erro ao gerar: " + e.message);
+
+    // 7. Inserir todas as 50 perguntas em batch
+    const { error: insertQuestionsError } = await supabase
+      .from('questions')
+      .insert(questionsToInsert)
+
+    if (insertQuestionsError) {
+      throw new Error(`Falha ao registrar perguntas: ${insertQuestionsError.message}`)
+    }
+
+    // Sucesso! Fecha modal e atualiza interface
+    showAutoGenerateModal.value = false
+    await fetchData()
+
+    if (insertedLevels && insertedLevels.length > 0) {
+      expandedLevelId.value = insertedLevels[0].id
+    }
+  } catch (err) {
+    console.error("Erro ao gerar níveis BNCC:", err)
+    generateError.value = err.message || "Erro desconhecido ao gerar níveis."
   } finally {
-    loading.value = false;
+    isGeneratingLevels.value = false
   }
 }
 </script>

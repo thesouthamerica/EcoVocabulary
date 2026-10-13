@@ -47,31 +47,62 @@ export default defineEventHandler(async (event) => {
   // ==========================================
   
   // 1. Buscar Alunos
-  let studentsQuery = supabase.from('students_whitelist').select('slug, admin_id')
+  let studentsQuery = supabase.from('students_whitelist').select('id, slug, admin_id')
   if (subadminId) {
     studentsQuery = studentsQuery.eq('admin_id', subadminId)
   }
   
   const { data: studentsData } = await studentsQuery
   const totalStudents = studentsData ? studentsData.length : 0
-  
   const studentSlugs = (studentsData || []).map(s => s.slug)
 
   // 2. Buscar Respostas
-  let answersQuery = supabase.from('user_answers').select('*, questions(promptPt, type)')
+  let answers: any[] = []
   if (subadminId) {
-    if (studentSlugs.length === 0) {
-      // Subadmin não tem alunos, retorna zerado
+    if (totalStudents === 0) {
       return getEmptyMetrics()
     }
-    answersQuery = answersQuery.in('user_id', studentSlugs)
-  }
 
-  const { data: answers, error: answersError } = await answersQuery
+    // Busca respostas cujo user_id contenha o ID do subadmin (padrão `${slug}-${subadminId}`)
+    const { data: subAnswers, error: subError } = await supabase
+      .from('user_answers')
+      .select('*, questions(promptPt, type)')
+      .ilike('user_id', `%${subadminId}%`)
+    
+    if (subError) {
+      console.error(subError)
+      throw createError({ statusCode: 500, statusMessage: 'Erro ao buscar respostas' })
+    }
+    answers = subAnswers || []
 
-  if (answersError) {
-    console.error(answersError)
-    throw createError({ statusCode: 500, statusMessage: 'Erro ao buscar respostas' })
+    // Caso existam respostas legadas salvas apenas com o slug direto (sem o subadminId no final)
+    if (studentSlugs.length > 0) {
+      const { data: legacyAnswers } = await supabase
+        .from('user_answers')
+        .select('*, questions(promptPt, type)')
+        .in('user_id', studentSlugs)
+      
+      if (legacyAnswers && legacyAnswers.length > 0) {
+        const existingIds = new Set(answers.map(a => a.id))
+        legacyAnswers.forEach(la => {
+          if (!existingIds.has(la.id)) {
+            answers.push(la)
+            existingIds.add(la.id)
+          }
+        })
+      }
+    }
+  } else {
+    // Métricas Globais (Master Geral)
+    const { data: allAnswers, error: answersError } = await supabase
+      .from('user_answers')
+      .select('*, questions(promptPt, type)')
+
+    if (answersError) {
+      console.error(answersError)
+      throw createError({ statusCode: 500, statusMessage: 'Erro ao buscar respostas' })
+    }
+    answers = allAnswers || []
   }
 
   if (!answers || answers.length === 0) {
@@ -79,8 +110,26 @@ export default defineEventHandler(async (event) => {
   }
 
   // 3. Processar Dados
-  const activeStudentIds = new Set(answers.map(a => a.user_id))
-  const activeStudents = activeStudentIds.size
+  const activeStudentSet = new Set<string>()
+  answers.forEach(a => {
+    // Tenta associar o user_id da resposta a um aluno da whitelist
+    const matched = (studentsData || []).find(s => {
+      const cleanSlug = s.slug.replace(/-\d{4}$/, '')
+      return a.user_id === s.slug ||
+             (s.admin_id && a.user_id === `${s.slug}-${s.admin_id}`) ||
+             (s.admin_id && a.user_id === `${cleanSlug}-${s.admin_id}`) ||
+             (s.admin_id && a.user_id.startsWith(`${cleanSlug}-`))
+    })
+
+    if (matched) {
+      activeStudentSet.add(matched.id || matched.slug)
+    } else if (!subadminId) {
+      // No relatório global, se for visitante ou teste, contabiliza o identificador único
+      activeStudentSet.add(a.user_id)
+    }
+  })
+
+  const activeStudents = activeStudentSet.size
   const inactiveStudents = Math.max(0, totalStudents - activeStudents)
 
   let totalCorrect = 0
@@ -89,6 +138,7 @@ export default defineEventHandler(async (event) => {
     'association': { correct: 0, total: 0 },
     'translation': { correct: 0, total: 0 },
     'sentence': { correct: 0, total: 0 },
+    'hangman': { correct: 0, total: 0 },
   }
 
   answers.forEach(a => {
@@ -100,7 +150,7 @@ export default defineEventHandler(async (event) => {
     categoryStats[cat].total++
     if (a.is_correct) categoryStats[cat].correct++
 
-    // Question stats (Mais importante para global)
+    // Question stats
     const qId = a.question_id
     if (!questionStats[qId]) {
       questionStats[qId] = {
@@ -120,18 +170,20 @@ export default defineEventHandler(async (event) => {
     accuracy: Math.round((q.correct / q.total) * 100)
   }))
 
-  // Apenas as com pelo menos 5 respostas para ter relevância estatística
-  const relevantQuestions = questionsArray.filter(q => q.total >= 5)
-  // Se não houver suficientes, pega todas
+  // Apenas as com pelo menos 5 respostas para ter relevância estatística, ou todas se poucas
+  const relevantQuestions = questionsArray.filter(q => q.total >= 3)
   const questionsToRank = relevantQuestions.length > 0 ? relevantQuestions : questionsArray
 
   const hardestQuestions = [...questionsToRank].sort((a, b) => a.accuracy - b.accuracy).slice(0, 5)
   const easiestQuestions = [...questionsToRank].sort((a, b) => b.accuracy - a.accuracy).slice(0, 5)
 
-  const categoryPerformance = Object.entries(categoryStats).map(([k, stats]) => ({
-    category: k,
-    accuracy: stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0
-  }))
+  // Filtra apenas categorias que de fato foram jogadas nesta turma/visão
+  const categoryPerformance = Object.entries(categoryStats)
+    .filter(([_, stats]) => stats.total > 0)
+    .map(([k, stats]) => ({
+      category: k,
+      accuracy: Math.round((stats.correct / stats.total) * 100)
+    }))
 
   return {
     overview: {

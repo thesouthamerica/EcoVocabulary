@@ -8,6 +8,7 @@ export default defineEventHandler(async (event) => {
 
   const query = getQuery(event)
   const studentSlugsQuery = query.studentSlugs as string
+  const adminId = query.adminId as string
 
   if (!studentSlugsQuery) {
     return {
@@ -32,11 +33,27 @@ export default defineEventHandler(async (event) => {
     }
   }
 
+  // 1. Gera todas as combinações possíveis de user_id salvas no banco
+  const candidateUserIds = new Set<string>()
+  studentSlugs.forEach(slug => {
+    candidateUserIds.add(slug)
+    if (adminId) {
+      candidateUserIds.add(`${slug}-${adminId}`)
+    }
+    const cleanSlug = slug.replace(/-\d{4}$/, '')
+    candidateUserIds.add(cleanSlug)
+    if (adminId) {
+      candidateUserIds.add(`${cleanSlug}-${adminId}`)
+      candidateUserIds.add(`${cleanSlug}-2026-${adminId}`)
+      candidateUserIds.add(`${cleanSlug}-2027-${adminId}`)
+    }
+  })
+
   // 2. Fetch all answers for these students
   const { data: answers, error: answersError } = await supabase
     .from('user_answers')
     .select('*, questions(promptPt, type)')
-    .in('user_id', studentSlugs)
+    .in('user_id', Array.from(candidateUserIds))
 
   if (answersError) {
     console.error(answersError)
@@ -45,7 +62,7 @@ export default defineEventHandler(async (event) => {
 
   if (!answers || answers.length === 0) {
     return {
-      overview: { activeStudents: studentSlugs.length, totalAnswers: 0, avgAccuracy: 0 },
+      overview: { activeStudents: 0, totalAnswers: 0, avgAccuracy: 0 },
       hardestQuestions: [],
       easiestQuestions: [],
       categoryPerformance: [],
@@ -54,12 +71,31 @@ export default defineEventHandler(async (event) => {
   }
 
   // 3. Process Data
+  // Mapeia quais alunos únicos desta turma realmente responderam perguntas
+  const activeStudentSlugSet = new Set<string>()
+  answers.forEach(a => {
+    const matched = studentSlugs.find(slug => {
+      const cleanSlug = slug.replace(/-\d{4}$/, '')
+      return a.user_id === slug ||
+             (adminId && a.user_id === `${slug}-${adminId}`) ||
+             (adminId && a.user_id === `${cleanSlug}-${adminId}`) ||
+             (adminId && a.user_id.startsWith(`${cleanSlug}-`))
+    })
+    if (matched) {
+      activeStudentSlugSet.add(matched)
+    } else {
+      activeStudentSlugSet.add(a.user_id)
+    }
+  })
+
+  const activeStudents = activeStudentSlugSet.size
   let totalCorrect = 0
   const questionStats: Record<string, any> = {}
   const categoryStats: Record<string, { correct: number, total: number }> = {
     'association': { correct: 0, total: 0 },
     'translation': { correct: 0, total: 0 },
     'sentence': { correct: 0, total: 0 },
+    'hangman': { correct: 0, total: 0 },
   }
 
   answers.forEach(a => {
@@ -106,14 +142,16 @@ export default defineEventHandler(async (event) => {
     status: q.accuracy < 50 && q.avgTime < 5 ? 'Chute' : (q.accuracy < 50 ? 'Dificuldade' : 'Bom')
   }))
 
-  const categoryPerformance = Object.entries(categoryStats).map(([k, stats]) => ({
-    category: k,
-    accuracy: stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0
-  }))
+  const categoryPerformance = Object.entries(categoryStats)
+    .filter(([_, stats]) => stats.total > 0)
+    .map(([k, stats]) => ({
+      category: k,
+      accuracy: Math.round((stats.correct / stats.total) * 100)
+    }))
 
   return {
     overview: {
-      activeStudents: studentSlugs.length,
+      activeStudents,
       totalAnswers: answers.length,
       avgAccuracy: Math.round((totalCorrect / answers.length) * 100)
     },

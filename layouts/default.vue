@@ -50,7 +50,7 @@
       </div>
       <!-- Espaço vazio caso não esteja logado, para equilibrar o flexbox -->
       <div v-else-if="route.path === '/login'" class="flex min-w-[40px] sm:min-w-[120px] justify-end items-center">
-        <NuxtLink to="/admin" class="p-2 sm:p-3 rounded-full hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600 shadow-sm bg-white border border-gray-100" title="Acesso Admin">
+        <NuxtLink to="/admin" class="p-2 sm:p-3 rounded-full hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600 shadow-sm bg-white border border-gray-100" title="Acesso Adm">
           <SettingsIcon class="w-5 h-5 sm:w-6 sm:h-6" />
         </NuxtLink>
       </div>
@@ -67,7 +67,7 @@
       <div class="mt-2 flex justify-center gap-4">
         <a href="https://github.com/thesouthamerica" class="text-eco-blue hover:text-eco-blue-light transition-colors font-bold">GitHub</a>
         <a href="#" class="text-eco-blue hover:text-eco-blue-light transition-colors font-bold">LinkedIn</a>
-        <a href="https://www.instagram.com/leonardo.bezerra39/" class="text-eco-blue hover:text-eco-blue-light transition-colors font-bold">Instagram</a>
+        <a href="https://www.instagram.com/leonardo.bezerra.dev/" class="text-eco-blue hover:text-eco-blue-light transition-colors font-bold">Instagram</a>
       </div>
       <p class="font-medium mt-3 text-gray-400">Erro com a aplicação? Entre em contato pelos links acima!</p>
     </footer>
